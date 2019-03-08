@@ -1,5 +1,4 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-
     <v-data-table
             :headers="headers"
             :items="clients"
@@ -14,7 +13,7 @@
             <td class="text-center">{{ props.item.phoneNumber }}</td>
             <td class="text-center">{{ props.item.isActive }}</td>
             <v-btn slot="activator" icon class="mx-0" @click.native="deleteClient(props.item.id)">
-                <v-icon color="error">delete</v-icon>
+                <v-icon color="secondary">delete</v-icon>
             </v-btn>
         </template>
     </v-data-table>
@@ -23,7 +22,6 @@
 <script>
     import { store } from 'vuex';
     import { bus } from '../main';
-
 
     export default {
         name: "ClientList",
@@ -65,11 +63,11 @@
                     }
                 )
             },
-
             deleteClient(clientId) {
                 this.$http.delete(this.apiRoutes.delete.deleteClient(clientId)).then(
                     response => {
                         console.log(response)
+                        this.getAllClients();
                     }
                 )
             }

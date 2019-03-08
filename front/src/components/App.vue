@@ -1,28 +1,30 @@
-
 <template>
     <v-app>
         <v-container>
-    <v-flex>
-        <router-link to="/ClientList">Liste de clients</router-link>
-        <router-link to="/ClientForm">Nouveau client</router-link>
-    </v-flex>
 
-
-    <router-view></router-view>
+            <router-view>
+                <ClientTabs></ClientTabs>
+            </router-view>
         </v-container>
     </v-app>
 </template>
-
 <script>
     import { mapGetters } from 'vuex';
+    import ClientTabs from "./ClientTabs.vue";
 
     export default {
-        name: 'Example',
+        name: 'App',
+        components: {ClientTabs},
         computed: {
             ...mapGetters([
                 'apiRoutes'
             ])
         },
+        data() {
+            return {
+                active: null,
+            }
+        }
     }
 </script>
 
