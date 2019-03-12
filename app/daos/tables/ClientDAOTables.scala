@@ -12,16 +12,24 @@ trait ClientDAOTables extends DAOSlick {
     def companyName = column[String]("companyName")
     def referentFirstName = column[String]("referentFirstName")
     def referentLastName = column[String]("referentLastName")
+    def adress  = column[String]("adress")
+    def postalCode = column[String]("postalCode")
+    def city = column[String]("city")
     def email = column[String]("email")
     def phoneNumber = column[String]("phoneNumber")
+    def VATNumber = column[String]("VATNumber")
     def isActive = column[Boolean]("isActive")
     def * = (
       id,
       companyName,
       referentFirstName,
       referentLastName,
+      adress,
+      postalCode,
+      city,
       email,
       phoneNumber,
+      VATNumber,
       isActive) <> ((DBClient.apply _).tupled, DBClient.unapply)
 
 
@@ -30,8 +38,12 @@ trait ClientDAOTables extends DAOSlick {
       companyName,
       referentFirstName,
       referentLastName,
+      adress,
+      postalCode,
+      city,
       email,
       phoneNumber,
+      VATNumber,
       isActive
     ) <> ((DBClient.apply _).tupled, DBClient.unapply)
   }

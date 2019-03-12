@@ -24,8 +24,12 @@ class ClientController @Inject()(components: ControllerComponents, clientDAO: Cl
           companyName = clientForm.companyName,
           referentFirstName = clientForm.referentFirstName,
           referentLastName = clientForm.referentLastName,
+          adress = clientForm.adress,
+          postalCode = clientForm.postalCode,
+          city = clientForm.city,
           email = clientForm.email,
           phoneNumber = clientForm.phoneNumber,
+          VATNumber = clientForm.VATNumber,
           isActive = clientForm.isActive
         )
         clientDAO.save(newClient).map { clientForm =>
@@ -41,8 +45,12 @@ class ClientController @Inject()(components: ControllerComponents, clientDAO: Cl
       "companyName" -> client.companyName,
       "referentFirstName" -> client.referentFirstName,
       "referentLastName" -> client.referentLastName,
+      "adress" -> client.adress,
+      "postalCode" -> client.postalCode,
+      "city" -> client.city,
       "email" -> client.email,
       "phoneNumber" -> client.phoneNumber,
+      "VATNumber" -> client.VATNumber,
       "isActive" -> client.isActive
     ))
   }

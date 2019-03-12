@@ -20,8 +20,12 @@ class ClientDAOImpl @Inject() (override protected val dbConfigProvider: _root_.p
           res.companyName,
           res.referentFirstName,
           res.referentLastName,
+          res.adress,
+          res.postalCode,
+          res.city,
           res.email,
           res.phoneNumber,
+          res.VATNumber,
           res.isActive
         )
       }
@@ -34,8 +38,12 @@ class ClientDAOImpl @Inject() (override protected val dbConfigProvider: _root_.p
       companyName = client.companyName,
       referentFirstName = client.referentFirstName,
       referentLastName = client.referentLastName,
+      adress = client.adress,
+      postalCode = client.postalCode,
+      city = client.city,
       email = client.email,
       phoneNumber = client.phoneNumber,
+      VATNumber = client.VATNumber,
       isActive = client.isActive
     )
     db.run(slickClient.insertOrUpdate(dbClient)).map(_ => client)

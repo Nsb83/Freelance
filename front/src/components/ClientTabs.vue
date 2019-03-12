@@ -1,7 +1,6 @@
 
 <template>
-    <v-app>
-        <v-layout row wrap>
+        <v-layout>
             <v-flex>
                 <v-tabs
                         color="primary"
@@ -32,7 +31,6 @@
                 </v-tabs>
             </v-flex>
         </v-layout>
-    </v-app>
 </template>
 
 <script>

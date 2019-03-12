@@ -1,11 +1,8 @@
 <template>
-    <v-app>
-        <v-container>
-
+    <v-app class="m-1">
             <router-view>
                 <ClientTabs></ClientTabs>
             </router-view>
-        </v-container>
     </v-app>
 </template>
 <script>
@@ -28,6 +25,6 @@
     }
 </script>
 
-<style>
+<style scoped>
 
 </style>

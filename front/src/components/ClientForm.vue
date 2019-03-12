@@ -1,5 +1,5 @@
 <template>
-    <v-flex class="lg-10">
+    <v-flex>
         <v-form
                 ref="form"
                 v-model="valid"
@@ -22,6 +22,21 @@
             ></v-text-field>
 
             <v-text-field
+                    v-model="form.adress"
+                    label="Numéro et rue"
+            ></v-text-field>
+
+            <v-text-field
+                    v-model="form.postalCode"
+                    label="Code Postal"
+            ></v-text-field>
+
+            <v-text-field
+                    v-model="form.city"
+                    label="Ville"
+            ></v-text-field>
+
+            <v-text-field
                     v-model="form.email"
                     :rules="emailRules"
                     label="E-mail"
@@ -30,6 +45,11 @@
             <v-text-field
                     v-model="form.phoneNumber"
                     label="Numéro de téléphone"
+            ></v-text-field>
+
+            <v-text-field
+                    v-model="form.VATNumber"
+                    label="Numéro de TVA"
             ></v-text-field>
 
             <v-checkbox
@@ -42,7 +62,6 @@
                         center
                         @click="validate"
                         round
-                        fixed
                 >
                     Enregistrer
                 </v-btn>
@@ -55,7 +74,7 @@
                 :vertical="false"
                 v-model="snackbar.showSnackbar">
             Entreprise enregistrée !
-            <v-btn color="success" flat class="white--text" @click.native="snackbar.showSnackbar = false">Fermer</v-btn>
+            <v-btn color="white" flat @click.native="snackbar.showSnackbar = false">Fermer</v-btn>
         </v-snackbar>
     </v-flex>
 </template>
@@ -70,7 +89,11 @@
                 companyName: '',
                 referentFirstName: '',
                 referentLastName: '',
+                adress:'',
+                postalCode:'',
+                city:'',
                 phoneNumber: '',
+                VATNumber:'',
                 email: '',
                 isActive: false
             },

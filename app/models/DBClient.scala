@@ -6,8 +6,12 @@ case class DBClient (id: String,
                      companyName: String,
                      referentFirstName: String,
                      referentLastName: String,
+                     adress: String,
+                     postalCode: String,
+                     city: String,
                      email : String,
                      phoneNumber: String,
+                     VATNumber: String,
                      isActive : Boolean)
 
 object DBClient {
