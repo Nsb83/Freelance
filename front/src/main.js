@@ -26,6 +26,8 @@ Vue.use(Vuetify,{
 
 Vue.http.options.root = config.baseUrl();
 
+export const bus = new Vue();
+
 const route = new VueRouter({
     routes: router,
 });

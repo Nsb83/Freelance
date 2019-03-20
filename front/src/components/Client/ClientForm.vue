@@ -81,6 +81,8 @@
 
 <script>
     import {store} from 'vuex';
+    import clientList from './ClientList.vue'
+    import { bus } from '../../main';
 
     export default {
         data: () => ({
@@ -120,7 +122,9 @@
                 if (this.$refs.form.validate()) {
                     this.$http.post(this.apiRoutes.post.createClient, this.form).then(
                         result => {
-                            this.snackbar.showSnackbar = true
+                            this.snackbar.showSnackbar = true;
+                            bus.$emit('getAllClients');
+
                         }
                     )
                 }

@@ -24,12 +24,17 @@
 
 <script>
     import { store } from 'vuex';
-    import { bus } from '../main';
+    import { bus } from '../../main';
 
     export default {
         name: "ClientList",
         created: function() {
             this.getAllClients();
+
+            bus.$on('getAllClients', this.getAllClients);
+        },
+        beforeDestroy: function() {
+            bus.$off('getAllClients');
         },
         computed: {
             apiRoutes(){

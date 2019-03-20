@@ -37,6 +37,7 @@
     import { mapGetters } from 'vuex';
     import ClientForm from "./ClientForm.vue";
     import ClientList from "./ClientList.vue";
+    import { bus } from '../../main';
 
     export default {
         name: 'ClientTabs',

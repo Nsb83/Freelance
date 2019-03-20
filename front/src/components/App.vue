@@ -7,7 +7,7 @@
 </template>
 <script>
     import { mapGetters } from 'vuex';
-    import ClientTabs from "./ClientTabs.vue";
+    import ClientTabs from "./Client/ClientTabs.vue";
 
     export default {
         name: 'App',

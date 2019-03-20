@@ -7,6 +7,7 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
     state: {
         apiRoutes: apiRoutes,
+        // getAllClient: getAllClient,
     },
     getters: {
         apiRoutes: states => { return states.apiRoutes },
