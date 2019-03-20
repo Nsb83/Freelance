@@ -1,5 +1,5 @@
 <template>
-    <v-flex>
+    <v-flex class="px-2">
         <v-form
                 ref="form"
                 v-model="valid"
@@ -134,6 +134,9 @@
     }
 </script>
 
-<style>
-
+<style lang="scss">
+    .v-text-field {
+        padding-top: 6px;
+        margin-top: 2px;
+    }
 </style>

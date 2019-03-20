@@ -1,9 +1,20 @@
 
-import ClientList from './components/Client/ClientList.vue'
-import ClientForm from './components/Client/ClientForm.vue'
 import ClientTabs from './components/Client/ClientTabs.vue'
+import InvoiceList from "./components/Invoice/InvoiceList.vue";
 
 export default [
-    { path: '/', component: ClientTabs }
+    {
+        path: '/',
+        name: 'ClientTabs',
+        component: ClientTabs
+    },
+    {
+        path: '/invoiceList',
+        name: 'InvoiceList',
+        component: InvoiceList
+
+    }
+
+
 ];
 

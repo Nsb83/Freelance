@@ -1,4 +1,4 @@
-<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
+<template>
     <v-data-table
             :headers="headers"
             :items="clients"
@@ -14,7 +14,9 @@
             <td class="text-center">{{ props.item.email }}</td>
             <td class="text-center">{{ props.item.phoneNumber }}</td>
             <td class="text-center">{{ props.item.VATNumber }}</td>
-            <td class="text-center">{{ props.item.isActive }}</td>
+            <td class="text-center" v-if="props.item.isActive === true">Actif</td>
+            <td class="text-center secondary--text" v-else>Inactif</td>
+
             <v-btn slot="activator" icon class="mx-0" @click.native="deleteClient(props.item.id)">
                 <v-icon color="secondary">delete</v-icon>
             </v-btn>
@@ -67,16 +69,17 @@
                 this.$http.get(this.apiRoutes.get.getClients).then(
                     response => {
                         this.clients = response.body
+                        console.log(this.clients)
                     },
                     response => {
                         console.log(response)
                     }
                 )
             },
+
             deleteClient(clientId) {
                 this.$http.delete(this.apiRoutes.delete.deleteClient(clientId)).then(
                     response => {
-                        console.log(response);
                         this.getAllClients();
                     }
                 )
