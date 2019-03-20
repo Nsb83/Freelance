@@ -45,10 +45,12 @@ dist := (dist dependsOn frontEndBuild).value
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.0.0" % Test
 //libraryDependencies += "com.h2database" % "h2" % "1.4.197"
 libraryDependencies += "mysql" % "mysql-connector-java" % "8.0.14"
+libraryDependencies += "ai.x" %% "play-json-extensions" % "0.10.0"
 
 libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "3.0.0",
-  "com.typesafe.play" %% "play-slick-evolutions" % "3.0.0"
+  "com.typesafe.play" %% "play-slick-evolutions" % "3.0.0",
+  "com.typesafe.play" %% "play-json-joda" % "2.6.7"
 )
 
 libraryDependencies ++= Seq(

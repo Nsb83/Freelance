@@ -7,8 +7,7 @@
     >
         <template v-slot:items="props">
             <td class="text-center">{{ props.item.companyName }}</td>
-            <td class="text-center">{{ props.item.referentFirstName }}</td>
-            <td class="text-center">{{ props.item.referentLastName }}</td>
+            <td class="text-center">{{ props.item.referentFirstName }} {{ props.item.referentLastName }}</td>
             <td class="text-center">{{ props.item.adress }}</td>
             <td class="text-center">{{ props.item.postalCode}}</td>
             <td class="text-center">{{ props.item.city}}</td>
@@ -41,8 +40,7 @@
             return {
                 headers: [
                     { text: 'Nom de l\'entreprise', value: 'companyName', align:'center'},
-                    { text: 'Prénom du contact', value: 'referentFirstName', align:'center' },
-                    { text: 'Nom du Contact', value: 'referentLastName', align:'center' },
+                    { text: 'Contact', value: 'referentName', align:'center' },
                     { text: 'Numéro et rue', value: 'adress', align:'center' },
                     { text: 'Code Postal', value: 'postalCode', align:'center' },
                     { text: 'Ville', value: 'city', align:'center' },
@@ -63,7 +61,6 @@
             getAllClients() {
                 this.$http.get(this.apiRoutes.get.getClients).then(
                     response => {
-                        console.log(response.body);
                         this.clients = response.body
                     },
                     response => {
@@ -79,7 +76,6 @@
                     }
                 )
             }
-
         }
     }
 </script>
