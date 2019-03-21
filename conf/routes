@@ -3,18 +3,19 @@
 # ~~~~
 
 # Home page
-GET     /                               controllers.FrontController.index()
+GET     /                                           controllers.FrontController.index()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file                   controllers.Assets.at(path="/public", file)
+GET     /assets/*file                               controllers.Assets.at(path="/public", file)
 
 #Clients
-POST    /clients/create                 controllers.ClientController.newClient
-GET     /clients/findall                controllers.ClientController.findAll
-GET     /clients/find/:id               controllers.ClientController.find(id: String)
-DELETE  /clients/delete/:id             controllers.ClientController.delete(id: String)
+POST    /clients/create                             controllers.ClientController.newClient
+GET     /clients/findall                            controllers.ClientController.findAll
+GET     /clients/find/:id                           controllers.ClientController.find(id: String)
+DELETE  /clients/delete/:id                         controllers.ClientController.delete(id: String)
 
 #Invoice
-POST    /invoice/create/:clientId       controllers.InvoiceController.createInvoice(clientId: String)
-GET     /invoice/getByClient/:clientId  controllers.InvoiceController.findAllCompleteInvoiceByClient(clientId: String)
-
+POST    /invoice/create/:clientId                   controllers.InvoiceController.createInvoice(clientId: String)
+GET     /invoice/getCompleteByClient/:clientId      controllers.InvoiceController.findAllCompleteInvoiceByClient(clientId: String)
+GET     /invoice/getByClient/:clientId              controllers.InvoiceController.findAllInvoiceByClient(clientId: String)
+GET     /invoice/findAll                            controllers.InvoiceController.findAllInvoices

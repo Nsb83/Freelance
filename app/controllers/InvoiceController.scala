@@ -20,6 +20,7 @@ class InvoiceController @Inject()(components: ControllerComponents, invoiceDAO: 
     val year = LocalDateTime.now().getYear.toString
     year + '-' + "%04d".format(lastNumber)
   }
+
   /*
   Pour le numéro :
     Le reset à chaque nouveau début d'année
@@ -44,7 +45,7 @@ class InvoiceController @Inject()(components: ControllerComponents, invoiceDAO: 
               quantity = newService.quantity,
               unitPrice = newService.unitPrice,
               VATRate = newService.VATRate,
-              totalDutyFreePrice = newService.totalDutyFreePrice,
+              totalDutyFreePrice = newService.quantity * newService.unitPrice,
               VATTotal = newService.VATTotal,
               totalPrice = newService.totalPrice
             )
@@ -66,4 +67,19 @@ class InvoiceController @Inject()(components: ControllerComponents, invoiceDAO: 
 //    val dateTimeFormat: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
     Json.toJson(invoices)
   }
+
+  def findAllInvoiceByClient(clientId: String) = Action.async {
+    invoiceDAO.findInvoiceByClient(clientId).map { DBInvoice =>
+      val data = Json.toJson(DBInvoice)
+      Ok(Json.toJson(data))
+    }
+  }
+
+  def findAllInvoices = Action.async {
+    invoiceDAO.findAllInvoices.map { DBInvoice =>
+      Ok(Json.toJson(DBInvoice)
+      )
+    }
+  }
+
 }

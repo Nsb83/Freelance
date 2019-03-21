@@ -19,9 +19,9 @@ object InvoiceId {
 }
 
 object DBInvoice {
-  implicit val JodaWrites: Writes[DateTime] = JodaWrites.writes
-  implicit val JodaReads: Reads[DateTime] = JodaReads.reads
-  implicit val dateTimeFormat: Format[DateTime] = Format(JodaReads, JodaWrites)
+//  implicit val JodaWrites: Writes[DateTime] = JodaWrites.writes
+//  implicit val JodaReads: Reads[DateTime] = JodaReads.reads
+//  implicit val dateTimeFormat: Format[DateTime] = Format(JodaReads, JodaWrites)
 
   implicit val formatter: OFormat[DBInvoice] = Json.format[DBInvoice]
 }

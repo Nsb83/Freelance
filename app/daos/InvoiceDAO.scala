@@ -11,4 +11,8 @@ trait InvoiceDAO {
   def findLastNumber: Future[Int]
 
   def findCompleteInvoiceByClient(clientId: String): Future[Seq[Invoice]]
+
+  def findInvoiceByClient(clientId: String): Future[Seq[DBInvoice]]
+
+  def findAllInvoices: Future[Seq[DBInvoice]]
 }

@@ -7,11 +7,12 @@ import VueResource from 'vue-resource';
 import { store } from './store';
 import config from './config';
 import router from './router';
-
+import Moment from 'moment';
 
 Vue.use(VueRouter);
 Vue.use(Vuex);
 Vue.use(VueResource);
+Vue.use(Moment);
 Vue.use(Vuetify,{
     theme: {
         primary: "#0D47A1",
@@ -23,6 +24,9 @@ Vue.use(Vuetify,{
         success: "#2E7D32"
     }
 });
+
+Moment.locale('fr');
+Vue.prototype.$moment = Moment;
 
 Vue.http.options.root = config.baseUrl();
 

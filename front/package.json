@@ -33,7 +33,9 @@
   },
   "dependencies": {
     "bootstrap": "^4.0.0-alpha.6",
+    "moment": "^2.24.0",
     "vue": "^2.3.2",
+    "vue-moment": "^4.0.0",
     "vue-resource": "^1.5.1",
     "vue-router": "^3.0.2",
     "vuetify": "^1.5.5",

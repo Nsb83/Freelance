@@ -39,5 +39,24 @@ class InvoiceDAOImpl @Inject() (override protected val dbConfigProvider: _root_.
       }.toSeq
     }
   }
+  def findInvoiceByClient(clientId: String): Future[Seq[DBInvoice]] = {
+    db.run(slickInvoice.filter(_.clientId === clientId).result)
+  }
+
+  def findAllInvoices: Future[Seq[DBInvoice]] = {
+    val q = slickInvoice.result
+    db.run(q)
+//      .map { invoices =>
+//      invoices.groupBy(_._1).map { x =>
+//        Invoice(
+//          id = x._1.id,
+//          date = x._1.date,
+//          number = x._1.number,
+//          clientId = x._1.clientId,
+//          services = x._2.flatMap(_._2)
+//        )
+//      }.toSeq
+//    }
+  }
 }
 
