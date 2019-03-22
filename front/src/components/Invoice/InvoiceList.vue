@@ -1,5 +1,5 @@
 <template>
-    <v-content>
+    <v-content class="pa-0">
         <v-data-table
                 :headers="headers"
                 :items="invoices"
