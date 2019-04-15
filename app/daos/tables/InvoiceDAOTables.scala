@@ -12,12 +12,14 @@ trait InvoiceDAOTables extends DAOSlick {
   import profile.api._
 
   class InvoiceDBTable(tag: Tag) extends Table[DBInvoice](tag, "Invoice") {
-    def id = column[InvoiceId]("id", O.PrimaryKey)
+    def id = column[InvoiceId]("id", O.PrimaryKey, O.AutoInc)
+    def publicId = column[String]("publicId")
     def date = column[DateTime]("date")
     def number = column[String]("number")
     def clientId = column[String]("clientId")
     def * = (
       id,
+      publicId,
       date,
       number,
       clientId) <> ((DBInvoice.apply _).tupled, DBInvoice.unapply)

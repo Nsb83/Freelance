@@ -1,7 +1,7 @@
 package daos.tables
 
 import daos.DAOSlick
-import models.{DBService, InvoiceId, ServiceId}
+import models.{DBService, InvoiceId, ServiceId, Service}
 
 trait ServiceDAOTables extends DAOSlick {
 
@@ -14,9 +14,6 @@ trait ServiceDAOTables extends DAOSlick {
     def quantity = column[BigDecimal]("quantity")
     def unitPrice = column[BigDecimal]("unitPrice")
     def VATRate = column[BigDecimal]("VATRate")
-    def totalDutyFreePrice = column[BigDecimal]("totalDutyFreePrice")
-    def VATTotal = column[BigDecimal]("VATTotal")
-    def totalPrice = column[BigDecimal]("totalPrice")
     def * = (
       serviceId,
       invoiceId,
@@ -24,9 +21,7 @@ trait ServiceDAOTables extends DAOSlick {
       quantity,
       unitPrice,
       VATRate,
-      totalDutyFreePrice,
-      VATTotal,
-      totalPrice) <> ((DBService.apply _).tupled, DBService.unapply)
+) <> ((DBService.apply _).tupled, DBService.unapply)
   }
   lazy val slickService = TableQuery[ServiceDBTable]
 }

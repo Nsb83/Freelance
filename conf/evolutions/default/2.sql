@@ -3,7 +3,8 @@
 # --- !Ups
 
 CREATE TABLE `Invoice`(
-                       `id` VARCHAR(255) NOT NULL,
+                       `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+                       `publicId` VARCHAR(255) NOT NULL,
                        `clientId` VARCHAR(255) NOT NULL,
                        `date` DATETIME NOT NULL,
                        `number` VARCHAR(255) NOT NULL,

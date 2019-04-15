@@ -10,9 +10,7 @@ object ServiceForm {
                          quantity: BigDecimal,
                          unitPrice: BigDecimal,
                          VATRate: BigDecimal,
-                         totalDutyFreePrice: BigDecimal,
-                         VATTotal: BigDecimal,
-                         totalPrice: BigDecimal)
+                        )
 
   object ServiceForm {
     implicit val formatter: OFormat[ServiceForm] = Json.format[ServiceForm]

@@ -17,27 +17,28 @@
             <v-btn slot="activator" icon class="mx-0" @click.native="deleteClient(props.item.id)">
                 <v-icon color="secondary">delete</v-icon>
             </v-btn>
-            <v-btn slot="activator" icon class="mx-0" @click.native="getAllInvoiceForClient(props.item.id)">
-                <v-icon color="primary">receipt</v-icon>
-            </v-btn>
+<!--            <v-btn slot="activator" icon class="mx-0" @click.native="getAllInvoiceForClient(props.item.id)">-->
+<!--                <v-icon color="primary">receipt</v-icon>-->
+<!--            </v-btn>-->
         </template>
     </v-data-table>
 
-    <v-data-table
-            :headers="headers"
-            :items="clientInvoices"
-            class="elevation-1 text-xs-center"
-            hide-actions
-    >
-        <template v-slot:items="props">
-            {{ props.item }}
-            <td class="text-center">{{ props.item.clientId }}</td>
-            <td class="text-center">{{ props.item.date }} </td>
-            <td class="text-center">{{ props.item.number }}</td>
-            <td class="text-center">{{ props.item.services }}</td>
+<!--    <v-data-table-->
+<!--            :headers="headers"-->
+<!--            :items="clientInvoices"-->
+<!--            class="elevation-1 text-xs-center"-->
+<!--            hide-actions-->
+<!--    >-->
+<!--        <template v-slot:items="props">-->
+<!--            {{ props.item }}-->
+<!--            <td class="text-center">{{ props.item.clientId }}</td>-->
+<!--            <td class="text-center">{{ props.item.date }} </td>-->
+<!--            <td class="text-center">{{ props.item.number }}</td>-->
+<!--            <td class="text-center">{{ props.item.services }}</td>-->
+<!--            -->
 
-        </template>
-    </v-data-table>
+<!--        </template>-->
+<!--    </v-data-table>-->
     </v-content>
 </template>
 
@@ -49,7 +50,6 @@
         name: "ClientList",
         created: function() {
             this.getAllClients();
-
             bus.$on('getAllClients', this.getAllClients);
         },
         beforeDestroy: function() {
@@ -75,13 +75,7 @@
                 ],
                 clients: [],
                 clientInvoices: [],
-                toto: {
-                    clientId: "",
-                    date:"",
-                    id: "",
-                    number: "",
-                    services: []
-                }
+                isActive: null,
             }
         },
         watch:{
@@ -110,8 +104,6 @@
                   }
               )
             },
-
-
 
             deleteClient(clientId) {
                 this.$http.delete(this.apiRoutes.delete.deleteClient(clientId)).then(

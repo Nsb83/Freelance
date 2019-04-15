@@ -1,6 +1,9 @@
 export default {
     post: {
-        createClient: 'http://localhost:9000/clients/create'
+        createClient: 'http://localhost:9000/clients/create',
+        createInvoice: function(clientId) {
+            return 'http://localhost:9000//invoice/create/' + clientId
+        }
     },
     get: {
         getClients: 'http://localhost:9000/clients/findall',

@@ -8,17 +8,37 @@ import javax.inject.Inject
 import models._
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import org.joda.time.{DateTime, LocalDateTime}
-import play.api.libs.json.{JsError, JsString, JsValue, Json}
-import play.api.mvc.{AbstractController, ControllerComponents, Result}
+import play.api.libs.json._
+import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents, Result}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class InvoiceController @Inject()(components: ControllerComponents, invoiceDAO: InvoiceDAO)(implicit val executionContext: ExecutionContext)
   extends AbstractController(components) {
 
-  def createUniqueChronologicalNumber(lastNumber: Int) = {
-    val year = LocalDateTime.now().getYear.toString
-    year + '-' + "%04d".format(lastNumber)
+  def createUniqueChronologicalNumber(): Future[String] = {
+    val actualYear = LocalDateTime.now().getYear.toString
+    invoiceDAO.findLastNumber.map { number =>
+      number.lastOption.map { x =>
+        val number = x.id.value
+          val year: Array[String] = x.number.split('-')
+          val yearToLong: Long = year(0).toLong
+          if (actualYear.toLong > yearToLong) {
+            actualYear + '-' + "%04d".format(1)
+          } else {
+            val numb = number + 1
+            yearToLong.toString + '-' + "%04d".format(numb)
+          }
+
+      }.getOrElse(actualYear + '-' + "%04d".format(1))
+    }
+  }
+  def getLastInvoiceNumber(): Future[Long] = {
+    invoiceDAO.findLastNumber.map { list =>
+      list.lastOption.map { number =>
+        number.id.value
+      }.getOrElse(0l)
+    }
   }
 
   /*
@@ -28,44 +48,62 @@ class InvoiceController @Inject()(components: ControllerComponents, invoiceDAO: 
 
   def createInvoice(clientId: String) = Action.async(parse.json) { implicit req =>
     req.body.validate[InvoiceForm].fold(
-      error => Future.successful(BadRequest(Json.obj("status" -> "Vous dites ? ... C'est non !", "message" -> JsError.toJson(error)))),
+      error => Future.successful(BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toJson(error)))),
       invoiceForm => {
-        invoiceDAO.findLastNumber.flatMap { lastNumber =>
-          val newInvoice = DBInvoice(
-            id = InvoiceId(UUID.randomUUID().toString),
+        // Récupérer le dernier id de DBInvoice
+        createUniqueChronologicalNumber().flatMap { number =>
+          val dbInvoice = DBInvoice(
+            publicId = UUID.randomUUID().toString,
             date = DateTime.now(),
-            number = createUniqueChronologicalNumber(lastNumber),
-            clientId = clientId,
+            number = number,
+            clientId = clientId
           )
-          val dbServices = invoiceForm.services.map { newService =>
-            DBService(
-              serviceId = ServiceId(UUID.randomUUID().toString),
-              invoiceId = newInvoice.id,
-              serviceName = newService.serviceName,
-              quantity = newService.quantity,
-              unitPrice = newService.unitPrice,
-              VATRate = newService.VATRate,
-              totalDutyFreePrice = newService.quantity * newService.unitPrice,
-              VATTotal = newService.VATTotal,
-              totalPrice = newService.totalPrice
-            )
+          getLastInvoiceNumber.flatMap { number =>
+            val numb  = number + 1
+            val services = invoiceForm.services.map { newService =>
+              DBService(
+                serviceId = ServiceId(UUID.randomUUID().toString),
+                invoiceId = InvoiceId(numb),
+                serviceName = newService.serviceName,
+                quantity = newService.quantity,
+                unitPrice = newService.unitPrice,
+                VATRate = newService.VATRate
+              )
+            }
+            invoiceDAO.saveInvoice(dbInvoice, services).map(_ => Ok)
           }
-          invoiceDAO.saveInvoice(newInvoice, dbServices).map(_ => Ok)
         }
       }
     )
   }
 
-  def findAllCompleteInvoiceByClient(clientId: String) = Action.async {
-    invoiceDAO.findCompleteInvoiceByClient(clientId).map { invoices =>
-      val data = makeCompleteInvoicesToJson(invoices)
+//  def findAllCompleteInvoiceByClient(clientId: String) = Action.async {
+//    invoiceDAO.findCompleteInvoiceByClient(clientId).map { invoices =>
+//      val data = makeCompleteInvoicesToJson(invoices)
+//      Ok(Json.toJson(data))
+//    }
+//  }
+
+  def getInvoices(invoiceId: InvoiceId): Action[AnyContent] = Action.async {
+    invoiceDAO.getInvoice(invoiceId).map { invoices =>
+      val q = invoices.map { invoice =>
+        val x: FullInvoice = FullInvoice.getCalculatedInvoice(invoice)
+        Json.toJson(x)
+
+      }
+      Ok(Json.toJson(q))
+    }
+  }
+
+  def findInvoice(invoiceId: InvoiceId) = Action.async {
+    invoiceDAO.findInvoice(invoiceId).map { invoices =>
+      val data = Json.toJson(invoices)
       Ok(Json.toJson(data))
     }
   }
 
-  private def makeCompleteInvoicesToJson(invoices: Seq[Invoice]): JsValue = {
-//    val dateTimeFormat: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
-    Json.toJson(invoices)
+  private def makeCompleteInvoiceToJson(invoice: FullInvoice): JsValue = {
+    Json.toJson(invoice)
   }
 
   def findAllInvoiceByClient(clientId: String) = Action.async {
@@ -75,10 +113,13 @@ class InvoiceController @Inject()(components: ControllerComponents, invoiceDAO: 
     }
   }
 
-  def findAllInvoices = Action.async {
-    invoiceDAO.findAllInvoices.map { DBInvoice =>
-      Ok(Json.toJson(DBInvoice)
-      )
+  def findAllInvoices: Action[AnyContent] = Action.async {
+    invoiceDAO.findAllInvoices.map { seqInvoice =>
+      val q = seqInvoice.map { invoice =>
+        val x = FullInvoice.getCalculatedInvoice(invoice)
+        Json.toJson(x)
+      }
+      Ok(Json.toJson(q))
     }
   }
 

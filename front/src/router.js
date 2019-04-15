@@ -1,6 +1,6 @@
 
 import ClientTabs from './components/Client/ClientTabs.vue'
-import InvoiceList from "./components/Invoice/InvoiceList.vue";
+import InvoiceTabs from './components/Invoice/InvoiceTabs.vue';
 
 export default [
     {
@@ -9,9 +9,9 @@ export default [
         component: ClientTabs
     },
     {
-        path: '/invoiceList',
-        name: 'InvoiceList',
-        component: InvoiceList
+        path: '/invoice',
+        name: 'InvoiceTabs',
+        component: InvoiceTabs
 
     }
 

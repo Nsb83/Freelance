@@ -10,7 +10,7 @@
             <template v-slot:items="props">
                 <td class="text-center">{{ props.item.number }}</td>
                 <td class="text-center">{{ formatDateTime(props.item.date) }}</td>
-                <!--<td class="text-center">{{ props.item.service }}</td>-->
+                <td class="text-center">{{ props.item.totalTTC }} €</td>
             </template>
         </v-data-table>
     </v-content>
@@ -40,7 +40,7 @@
                 headers: [
                     { text: 'Numéro de facture', value: 'number', align:'center'},
                     { text: 'date', value: 'date', align:'center' },
-                    // { text: 'Prestation', value: 'services', align: 'center'}
+                    { text: 'Montant total TTC', value: 'totalTTC', align: 'center'}
                          ],
                 invoices: [],
                 services: [],
