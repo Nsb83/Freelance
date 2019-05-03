@@ -9,6 +9,7 @@
 
             <template v-slot:items="props">
                 <td class="text-center">{{ props.item.number }}</td>
+                <td class="text-center">{{ props.item.client }}</td>
                 <td class="text-center">{{ formatDateTime(props.item.date) }}</td>
                 <td class="text-center">{{ props.item.totalTTC }} €</td>
             </template>
@@ -24,11 +25,10 @@
         name: "InvoiceList",
         created: function() {
             this.getAllInvoices();
-
-            bus.$on('getAllInvoice', this.getAllInvoices);
+            bus.$on('getAllInvoices', this.getAllInvoices);
         },
         beforeDestroy: function() {
-            bus.$off('getAllInvoice');
+            bus.$off('getAllInvoices');
         },
         computed: {
             apiRoutes(){
@@ -38,7 +38,8 @@
         data() {
             return {
                 headers: [
-                    { text: 'Numéro de facture', value: 'number', align:'center'},
+                    { text: 'Numéro de facture', value: 'number', align: 'center'},
+                    { text: 'Client', value: 'client', align: 'center' },
                     { text: 'date', value: 'date', align:'center' },
                     { text: 'Montant total TTC', value: 'totalTTC', align: 'center'}
                          ],
@@ -53,10 +54,10 @@
         },
         methods: {
             getAllInvoices: function() {
-                this.$http.get(this.apiRoutes.get.getAllInvoices).then(
+                this.$http.get(this.apiRoutes.get.getAllInvoicesWithClient).then(
                     response => {
                         this.invoices = response.body;
-                        console.log(this.invoices)
+console.log(this.invoices)
                     },
                     response => {
                         console.log(response)

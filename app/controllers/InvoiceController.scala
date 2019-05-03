@@ -8,6 +8,8 @@ import javax.inject.Inject
 import models._
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import org.joda.time.{DateTime, LocalDateTime}
+import play.api.libs.json.JodaWrites._
+import play.api.libs.json.JodaReads._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents, Result}
 
@@ -47,6 +49,7 @@ class InvoiceController @Inject()(components: ControllerComponents, invoiceDAO: 
   */
 
   def createInvoice(clientId: String) = Action.async(parse.json) { implicit req =>
+    println(req.body)
     req.body.validate[InvoiceForm].fold(
       error => Future.successful(BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toJson(error)))),
       invoiceForm => {
@@ -120,6 +123,22 @@ class InvoiceController @Inject()(components: ControllerComponents, invoiceDAO: 
         Json.toJson(x)
       }
       Ok(Json.toJson(q))
+    }
+  }
+
+  def findAllInvoicesWithClient: Action[AnyContent] = Action.async {
+    invoiceDAO.findAllInvoicesWithClient.map { seqInvoiceWithClient =>
+      val x = seqInvoiceWithClient.map { invoiceWithClient =>
+        val fullInvoice = FullInvoiceWithClient.getCalculatedInvoice(invoiceWithClient)
+        Json.obj(
+          "publicId" -> fullInvoice.publicId,
+          "date" -> fullInvoice.date,
+          "number" -> fullInvoice.number,
+          "client" -> fullInvoice.client.companyName,
+          "totalTTC" -> fullInvoice.totalTTC
+        )
+      }
+      Ok(Json.toJson(x))
     }
   }
 

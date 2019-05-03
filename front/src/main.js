@@ -8,8 +8,10 @@ import { store } from './store';
 import config from './config';
 import router from './router';
 import Moment from 'moment';
+import lodash from 'lodash';
 
 Vue.use(VueRouter);
+Vue.use(lodash);
 Vue.use(Vuex);
 Vue.use(VueResource);
 Vue.use(Moment);

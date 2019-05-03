@@ -19,6 +19,7 @@ POST    /invoice/create/:clientId                   controllers.InvoiceControlle
 #GET     /invoice/getCompleteByClient/:clientId      controllers.InvoiceController.findAllCompleteInvoiceByClient(clientId: String)
 GET     /invoice/getByClient/:clientId              controllers.InvoiceController.findAllInvoiceByClient(clientId: String)
 GET     /invoice/findAll                            controllers.InvoiceController.findAllInvoices
+GET     /invoice/findAllWithClient                  controllers.InvoiceController.findAllInvoicesWithClient
 
 GET     /invoice/find/:invoiceId                    controllers.InvoiceController.getInvoices(invoiceId: models.InvoiceId)
 

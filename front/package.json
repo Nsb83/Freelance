@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "bootstrap": "^4.0.0-alpha.6",
+    "lodash": "^4.17.11",
     "moment": "^2.24.0",
     "vue": "^2.3.2",
     "vue-moment": "^4.0.0",

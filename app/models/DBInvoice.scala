@@ -58,14 +58,14 @@ case class FullInvoice (id: InvoiceId,
                         publicId: String,
                         date: DateTime,
                         number: String,
-                        clientId: String,
+                        client: String,
                         services: Seq[Service],
                         totalHT: BigDecimal,
                         totalTVAs: Map[BigDecimal, BigDecimal],
                         totalTTC: BigDecimal)
 
 object FullInvoice {
-//  implicit val formatter: OFormat[FullInvoice] = Json.format[FullInvoice]
+  //  implicit val formatter: OFormat[FullInvoice] = Json.format[FullInvoice]
   implicit val writer: OWrites[FullInvoice] = Json.writes[FullInvoice]
 
   def getCalculatedInvoice(invoice: Invoice): FullInvoice = {
@@ -75,6 +75,39 @@ object FullInvoice {
       (vat, rate.map(_.VATTotal).sum)
     }
     FullInvoice(invoice.id, invoice.publicId, invoice.date, invoice.number, invoice.clientId, calculatedService, calculatedService.map(_.totalDutyFreePrice).sum, VATRates, calculatedService.map(_.totalPrice).sum)
+  }
+}
+case class InvoiceWithClient (id: InvoiceId,
+                              publicId: String,
+                              date: DateTime,
+                              number: String,
+                              services: Seq[DBService],
+                              client: DBClient)
+
+  object InvoiceWithClient {
+    implicit val formatter: OFormat[InvoiceWithClient] = Json.format[InvoiceWithClient]
+  }
+
+case class FullInvoiceWithClient (id: InvoiceId,
+                        publicId: String,
+                        date: DateTime,
+                        number: String,
+                        client: DBClient,
+                        services: Seq[Service],
+                        totalHT: BigDecimal,
+                        totalTVAs: Map[BigDecimal, BigDecimal],
+                        totalTTC: BigDecimal)
+
+object FullInvoiceWithClient {
+  implicit val writer: OWrites[FullInvoiceWithClient] = Json.writes[FullInvoiceWithClient]
+
+  def getCalculatedInvoice(invoiceWithClient: InvoiceWithClient): FullInvoiceWithClient = {
+    val seqServ: Seq[DBService] = invoiceWithClient.services
+    val calculatedService: Seq[Service] = seqServ.map(_.toService)
+    val VATRates: Map[BigDecimal, BigDecimal] = calculatedService.groupBy(_.VATRate).map { case (vat, rate) =>
+      (vat, rate.map(_.VATTotal).sum)
+    }
+    FullInvoiceWithClient(invoiceWithClient.id, invoiceWithClient.publicId, invoiceWithClient.date, invoiceWithClient.number, invoiceWithClient.client, calculatedService, calculatedService.map(_.totalDutyFreePrice).sum, VATRates, calculatedService.map(_.totalPrice).sum)
   }
 }
 

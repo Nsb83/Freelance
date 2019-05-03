@@ -22,4 +22,6 @@ trait InvoiceDAO {
   def findInvoice(invoiceId: InvoiceId): Future[immutable.Iterable[Invoice]]
 
   def getInvoice(invoiceId: InvoiceId): Future[Seq[Invoice]]
+
+  def findAllInvoicesWithClient: Future[Seq[InvoiceWithClient]]
 }

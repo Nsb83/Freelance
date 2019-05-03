@@ -26,6 +26,7 @@
                 </v-tab>
                 <v-tab-item
                         :key="1">
+                    <InvoiceForm></InvoiceForm>
 
                 </v-tab-item>
             </v-tabs>
@@ -36,11 +37,11 @@
 <script>
     import { mapGetters } from 'vuex';
     import InvoiceList from './InvoiceList.vue';
-
+    import InvoiceForm from './InvoiceForm.vue';
 
     export default {
         name: 'InvoiceTabs',
-        components: { InvoiceList },
+        components: { InvoiceList, InvoiceForm },
         computed: {
             ...mapGetters([
                 'apiRoutes'
