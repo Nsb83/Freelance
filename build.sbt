@@ -9,7 +9,7 @@ scalaVersion := "2.12.2"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-libraryDependencies ++= Seq(guice, filters, specs2 % Test)
+libraryDependencies ++= Seq(guice, ehcache, filters, cacheApi, ws, specs2 % Test)
 
 // Play framework hooks for development
 PlayKeys.playRunHooks += WebpackServer(file("./front"))
@@ -41,11 +41,12 @@ frontEndBuild := (frontEndBuild dependsOn cleanFrontEndBuild).value
 
 dist := (dist dependsOn frontEndBuild).value
 
-
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.0.0" % Test
 //libraryDependencies += "com.h2database" % "h2" % "1.4.197"
 libraryDependencies += "mysql" % "mysql-connector-java" % "8.0.14"
 libraryDependencies += "ai.x" %% "play-json-extensions" % "0.10.0"
+libraryDependencies += "net.codingwell" %% "scala-guice" % "4.1.0"
+libraryDependencies += "com.iheart" %% "ficus" % "1.4.5"
 
 libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "3.0.0",
@@ -60,4 +61,10 @@ libraryDependencies ++= Seq(
   "com.github.tototoshi" %% "slick-joda-mapper" % "2.3.0",
   "joda-time" % "joda-time" % "2.7",
   "org.joda" % "joda-convert" % "1.7"
+)
+libraryDependencies ++= Seq(
+  "com.mohiva" %% "play-silhouette" % "5.0.0",
+  "com.mohiva" %% "play-silhouette-password-bcrypt" % "5.0.0",
+  "com.mohiva" %% "play-silhouette-crypto-jca" % "5.0.0",
+  "com.mohiva" %% "play-silhouette-persistence" % "5.0.0"
 )
