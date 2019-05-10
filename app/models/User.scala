@@ -3,6 +3,7 @@ package models
 import java.util.UUID
 
 import com.mohiva.play.silhouette.api.{Identity, LoginInfo}
+import play.api.libs.json.{Json, OWrites}
 
 
 /**
@@ -33,3 +34,6 @@ case class DBUser(
                    phoneNumber: String,
                    SIRENNumber: String)
 
+object User {
+  implicit val userWriter: OWrites[User] = Json.writes[User]
+}

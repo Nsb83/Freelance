@@ -54,12 +54,12 @@
 <!--</template>-->
 <script>
     import { mapGetters } from 'vuex';
-    import ClientTabs from "./Client/ClientTabs.vue";
+    import InvoiceTabs from "./Invoice/InvoiceTabs.vue";
     import SideMenu from "./SideMenu.vue";
 
     export default {
         name: 'App',
-        components: {ClientTabs, SideMenu},
+        components: {InvoiceTabs, SideMenu},
         // components: {SideMenu, ClientTabs},
         computed: {
             ...mapGetters([

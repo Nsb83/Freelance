@@ -9,7 +9,7 @@ trait UserDAOTables extends DAOSlick {
   import profile.api._
 
   class UserDBTable(tag: Tag) extends Table[DBUser](tag, "User"){
-    def id = column[String]("UserId", O.PrimaryKey)
+    def id = column[String]("id", O.PrimaryKey)
     def firstName = column[String]("firstName")
     def lastName = column[String]("lastName")
     def fullName = column[String]("fullName")

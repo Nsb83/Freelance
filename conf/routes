@@ -23,5 +23,11 @@ GET     /invoice/findAllWithClient                  controllers.InvoiceControlle
 
 GET     /invoice/find/:invoiceId                    controllers.InvoiceController.getInvoices(invoiceId: models.InvoiceId)
 
-#Services
+GET         /                                controllers.ApplicationController.index
+GET         /signIn                          controllers.ApplicationController.signIn
+GET         /signUp                          controllers.ApplicationController.signUp
+GET         /signOut                         controllers.ApplicationController.signOut
+#POST        /authenticate/credentials        controllers.CredentialsAuthController.authenticate
+POST        /signIn                          controllers.SignInController.submit
+POST        /signUp                          controllers.SignUpController.signUp
 

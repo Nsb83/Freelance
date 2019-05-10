@@ -47,6 +47,7 @@ libraryDependencies += "mysql" % "mysql-connector-java" % "8.0.14"
 libraryDependencies += "ai.x" %% "play-json-extensions" % "0.10.0"
 libraryDependencies += "net.codingwell" %% "scala-guice" % "4.1.0"
 libraryDependencies += "com.iheart" %% "ficus" % "1.4.5"
+libraryDependencies += "com.adrianhurt" %% "play-bootstrap" % "1.2-P26-B4"
 
 libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "3.0.0",
