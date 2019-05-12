@@ -2,20 +2,30 @@ package controllers
 
 import java.util.UUID
 
+import com.mohiva.play.silhouette.api.Silhouette
+import com.mohiva.play.silhouette.api.actions.SecuredRequest
+import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import daos.ClientDAO
 import forms.ClientForm
 import javax.inject.Inject
 import models.DBClient
 import play.api.libs.json.{JsError, JsValue, Json}
-import play.api.mvc.{AbstractController, ControllerComponents}
+import play.api.mvc.{AbstractController, AnyContent, ControllerComponents}
+import utils.auth.{DefaultEnv, WithProvider}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ClientController @Inject()(components: ControllerComponents, clientDAO: ClientDAO)(implicit val executionContext: ExecutionContext)
+class ClientController @Inject()(
+                                  components: ControllerComponents,
+                                  silhouette: Silhouette[DefaultEnv],
+                                  clientDAO: ClientDAO
+                                )(implicit
+                                assets: AssetsFinder,
+                                  val executionContext: ExecutionContext)
   extends AbstractController(components) {
 
-  def newClient = Action.async(parse.json) { implicit req =>
-    req.body.validate[ClientForm.ClientForm].fold(
+  def newClient = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async(parse.json) { implicit request: SecuredRequest[DefaultEnv, JsValue]  =>
+    request.body.validate[ClientForm.ClientForm].fold(
       error => Future.successful(BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toJson(error)))),
       clientForm => {
         val clientUUID = UUID.randomUUID()
@@ -55,21 +65,21 @@ class ClientController @Inject()(components: ControllerComponents, clientDAO: Cl
     ))
   }
 
-  def findAll = Action.async { implicit req =>
+  def findAll = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit req: SecuredRequest[DefaultEnv, AnyContent] =>
     clientDAO.findAll().map { clients =>
       val data = clients.map(makeJsonClient)
       Ok(Json.toJson(data))
     }
   }
 
-  def find(id: String) = Action.async { implicit req =>
+  def find(id: String) = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit req: SecuredRequest[DefaultEnv, AnyContent] =>
     clientDAO.find(id).flatMap {
       case None => Future.successful(BadRequest)
       case Some(clients) => Future.successful(Ok(Json.toJson(clients)))
     }
   }
 
-  def delete(id: String) = Action.async {
+  def delete(id: String) = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit req: SecuredRequest[DefaultEnv, AnyContent] =>
     clientDAO.delete(id).map(result => Accepted)
   }
 }

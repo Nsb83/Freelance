@@ -2,6 +2,10 @@ package controllers
 
 import java.util.UUID
 
+import com.mohiva.play.silhouette.api.Silhouette
+import com.mohiva.play.silhouette.api.actions.SecuredRequest
+import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
+import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import daos.InvoiceDAO
 import forms.InvoiceForm.InvoiceForm
 import javax.inject.Inject
@@ -12,13 +16,21 @@ import play.api.libs.json.JodaWrites._
 import play.api.libs.json.JodaReads._
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents, Result}
+import utils.auth.{DefaultEnv, WithProvider}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class InvoiceController @Inject()(components: ControllerComponents, invoiceDAO: InvoiceDAO)(implicit val executionContext: ExecutionContext)
-  extends AbstractController(components) {
+class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
+                                  components: ControllerComponents,
+                                  credentialsProvider: CredentialsProvider,
+                                  invoiceDAO: InvoiceDAO
+                                 )
+                                 (implicit
+                                  assets: AssetsFinder,
+                                  val executionContext: ExecutionContext)
+  extends AbstractController(components)  {
 
-  def createUniqueChronologicalNumber(): Future[String] = {
+  def createUniqueChronologicalNumber: Future[String] = {
     val actualYear = LocalDateTime.now().getYear.toString
     invoiceDAO.findLastNumber.map { number =>
       number.lastOption.map { x =>
@@ -35,7 +47,7 @@ class InvoiceController @Inject()(components: ControllerComponents, invoiceDAO: 
       }.getOrElse(actualYear + '-' + "%04d".format(1))
     }
   }
-  def getLastInvoiceNumber(): Future[Long] = {
+  def getLastInvoiceNumber: Future[Long] = {
     invoiceDAO.findLastNumber.map { list =>
       list.lastOption.map { number =>
         number.id.value
@@ -48,13 +60,13 @@ class InvoiceController @Inject()(components: ControllerComponents, invoiceDAO: 
     Le reset à chaque nouveau début d'année
   */
 
-  def createInvoice(clientId: String) = Action.async(parse.json) { implicit req =>
+  def createInvoice(clientId: String) = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async(parse.json) { implicit req: SecuredRequest[DefaultEnv, JsValue] =>
     println(req.body)
     req.body.validate[InvoiceForm].fold(
       error => Future.successful(BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toJson(error)))),
       invoiceForm => {
         // Récupérer le dernier id de DBInvoice
-        createUniqueChronologicalNumber().flatMap { number =>
+        createUniqueChronologicalNumber.flatMap { number =>
           val dbInvoice = DBInvoice(
             publicId = UUID.randomUUID().toString,
             date = DateTime.now(),
@@ -87,7 +99,7 @@ class InvoiceController @Inject()(components: ControllerComponents, invoiceDAO: 
 //    }
 //  }
 
-  def getInvoices(invoiceId: InvoiceId): Action[AnyContent] = Action.async {
+  def getInvoices(invoiceId: InvoiceId): Action[AnyContent] = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit req: SecuredRequest[DefaultEnv, AnyContent] =>
     invoiceDAO.getInvoice(invoiceId).map { invoices =>
       val q = invoices.map { invoice =>
         val x: FullInvoice = FullInvoice.getCalculatedInvoice(invoice)
@@ -98,7 +110,7 @@ class InvoiceController @Inject()(components: ControllerComponents, invoiceDAO: 
     }
   }
 
-  def findInvoice(invoiceId: InvoiceId) = Action.async {
+  def findInvoice(invoiceId: InvoiceId) = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit req: SecuredRequest[DefaultEnv, AnyContent] =>
     invoiceDAO.findInvoice(invoiceId).map { invoices =>
       val data = Json.toJson(invoices)
       Ok(Json.toJson(data))
@@ -109,14 +121,14 @@ class InvoiceController @Inject()(components: ControllerComponents, invoiceDAO: 
     Json.toJson(invoice)
   }
 
-  def findAllInvoiceByClient(clientId: String) = Action.async {
+  def findAllInvoiceByClient(clientId: String) = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit req: SecuredRequest[DefaultEnv, AnyContent] =>
     invoiceDAO.findInvoiceByClient(clientId).map { DBInvoice =>
       val data = Json.toJson(DBInvoice)
       Ok(Json.toJson(data))
     }
   }
 
-  def findAllInvoices: Action[AnyContent] = Action.async {
+  def findAllInvoices: Action[AnyContent] = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit req: SecuredRequest[DefaultEnv, AnyContent] =>
     invoiceDAO.findAllInvoices.map { seqInvoice =>
       val q = seqInvoice.map { invoice =>
         val x = FullInvoice.getCalculatedInvoice(invoice)
@@ -126,7 +138,7 @@ class InvoiceController @Inject()(components: ControllerComponents, invoiceDAO: 
     }
   }
 
-  def findAllInvoicesWithClient: Action[AnyContent] = Action.async {
+  def findAllInvoicesWithClient: Action[AnyContent] = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit req: SecuredRequest[DefaultEnv, AnyContent] =>
     invoiceDAO.findAllInvoicesWithClient.map { seqInvoiceWithClient =>
       val x = seqInvoiceWithClient.map { invoiceWithClient =>
         val fullInvoice = FullInvoiceWithClient.getCalculatedInvoice(invoiceWithClient)

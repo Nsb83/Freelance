@@ -16,18 +16,19 @@ DELETE  /clients/delete/:id                         controllers.ClientController
 
 #Invoice
 POST    /invoice/create/:clientId                   controllers.InvoiceController.createInvoice(clientId: String)
-#GET     /invoice/getCompleteByClient/:clientId      controllers.InvoiceController.findAllCompleteInvoiceByClient(clientId: String)
+#GET     /invoice/getCompleteByClient/:clientId     controllers.InvoiceController.findAllCompleteInvoiceByClient(clientId: String)
 GET     /invoice/getByClient/:clientId              controllers.InvoiceController.findAllInvoiceByClient(clientId: String)
 GET     /invoice/findAll                            controllers.InvoiceController.findAllInvoices
 GET     /invoice/findAllWithClient                  controllers.InvoiceController.findAllInvoicesWithClient
 
 GET     /invoice/find/:invoiceId                    controllers.InvoiceController.getInvoices(invoiceId: models.InvoiceId)
 
-GET         /                                controllers.ApplicationController.index
-GET         /signIn                          controllers.ApplicationController.signIn
-GET         /signUp                          controllers.ApplicationController.signUp
-GET         /signOut                         controllers.ApplicationController.signOut
-#POST        /authenticate/credentials        controllers.CredentialsAuthController.authenticate
-POST        /signIn                          controllers.SignInController.submit
-POST        /signUp                          controllers.SignUpController.signUp
+GET     /                                           controllers.ApplicationController.index
+POST    /signIn                                     controllers.SignInController.submit
+POST    /signUp                                     controllers.SignUpController.signUp
+GET     /signIn                                     controllers.ApplicationController.signIn
+GET     /signUp                                     controllers.ApplicationController.signUp
+GET     /signOut                                    controllers.ApplicationController.signOut
+#POST   /authenticate/credentials                   controllers.CredentialsAuthController.authenticate
+
 

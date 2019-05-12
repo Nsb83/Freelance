@@ -41,6 +41,9 @@ class ApplicationController @Inject() (
       case None => Future.successful(Ok(views.html.signIn(SignInForm.form)))
     }
   }
+//  def signIn = silhouette.UnsecuredAction.async { implicit request =>
+//      Future.successful(Ok(views.html.signIn(SignInForm.form)))
+//  }
   /**
     * Handles the Sign Up action.
     *
