@@ -138,6 +138,7 @@
 <script>
     import { store } from 'vuex';
     import { bus } from '../../main';
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "InvoiceForm",
@@ -168,13 +169,12 @@
             },
         }),
         computed: {
-            apiRoutes() {
-                return this.$store.state.apiRoutes
-            }
+            ...mapGetters(['apiRoutes', 'user'])
         },
         methods: {
             validate() {
-                this.$http.post(this.apiRoutes.post.createInvoice(this.clientId), this.form).then(
+                let userID = this.user.userID;
+                this.$http.post(this.apiRoutes.post.createInvoice(this.clientId, userID), this.form).then(
                     response => {
                         this.snackbar.showSnackbar = true;
                         bus.$emit('getAllInvoices');
@@ -182,7 +182,7 @@
                 )
             },
             getClients() {
-                this.$http.get(this.apiRoutes.get.getClients).then(
+                this.$http.get(this.apiRoutes.get.getClients(this.user.userID)).then(
                     response => {
                         this.clients = _.map(response.body, function (client) {
                             return ({ value: client.id, text: client.companyName });

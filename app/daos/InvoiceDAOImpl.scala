@@ -1,6 +1,6 @@
 package daos
 
-import daos.tables.{ClientDAOTables, InvoiceDAOTables, ServiceDAOTables}
+import daos.tables.{ClientDAOTables, InvoiceDAOTables, ServiceDAOTables, UserDAOTables}
 import javax.inject.Inject
 import models._
 import org.joda.time.LocalDateTime
@@ -10,7 +10,7 @@ import scala.collection.immutable
 import scala.concurrent.{ExecutionContext, Future}
 
 class InvoiceDAOImpl @Inject() (override protected val dbConfigProvider: _root_.play.api.db.slick.DatabaseConfigProvider)(implicit val executionContext: ExecutionContext)
-  extends InvoiceDAO with InvoiceDAOTables with ServiceDAOTables with ClientDAOTables {
+  extends InvoiceDAO with InvoiceDAOTables with ServiceDAOTables with ClientDAOTables with UserDAOTables {
 
   import profile.api._
 
@@ -25,6 +25,10 @@ class InvoiceDAOImpl @Inject() (override protected val dbConfigProvider: _root_.
 
   def checkIfZero: Future[Int] = {
     db.run(slickInvoice.length.result)
+  }
+
+  def findLastNumberForUser(userID: UserID): Future[Seq[DBInvoice]] = {
+    db.run(slickInvoice.filter(_.userId === userID).sortBy(_.id).result)
   }
 
   def findLastNumber: Future[Seq[DBInvoice]] = {
@@ -97,7 +101,8 @@ class InvoiceDAOImpl @Inject() (override protected val dbConfigProvider: _root_.
           date = x._1.date,
           number = x._1.number,
           clientId = x._1.clientId,
-          services = x._2.flatMap(_._2)
+          services = x._2.flatMap(_._2),
+          userID = x._1.userID
         )
       }
     }
@@ -115,7 +120,8 @@ class InvoiceDAOImpl @Inject() (override protected val dbConfigProvider: _root_.
           date = x._1.date,
           number = x._1.number,
           clientId = x._1.clientId,
-          services = x._2.flatMap(_._2)
+          services = x._2.flatMap(_._2),
+          userID = x._1.userID
         )
       }.toSeq
     }
@@ -126,8 +132,8 @@ class InvoiceDAOImpl @Inject() (override protected val dbConfigProvider: _root_.
     db.run(slickInvoice.filter(_.clientId === clientId).result)
   }
 
-  def findAllInvoices: Future[Seq[Invoice]] = {
-    val q = slickInvoice.joinLeft(slickService).on(_.id === _.invoiceId)
+  def findAllInvoices(userID: UserID): Future[Seq[Invoice]] = {
+    val q = slickInvoice.filter(_.userId === userID).joinLeft(slickService).on(_.id === _.invoiceId)
     db.run(q.result).map { seqInvoice =>
       seqInvoice.groupBy(_._1).map { x =>
         Invoice(
@@ -136,14 +142,16 @@ class InvoiceDAOImpl @Inject() (override protected val dbConfigProvider: _root_.
           date = x._1.date,
           number = x._1.number,
           clientId = x._1.clientId,
-          services = x._2.flatMap(_._2)
+          services = x._2.flatMap(_._2),
+          userID = x._1.userID
         )
       }.toSeq
     }
   }
 
-  def findAllInvoicesWithClient: Future[Seq[InvoiceWithClient]] = {
+  def findAllInvoicesWithClient(userID: UserID): Future[Seq[InvoiceWithClient]] = {
     val q = slickInvoice
+      .filter(_.userId === userID)
       .joinLeft(slickService).on(_.id === _.invoiceId)
       .join(slickClient).on(_._1.clientId === _.id)
     db.run(q.result).map { seqInvoice =>
@@ -158,12 +166,12 @@ class InvoiceDAOImpl @Inject() (override protected val dbConfigProvider: _root_.
           date = dbInvoice.date,
           number = dbInvoice.number,
           client = client,
-          services = services
+          services = services,
+          userID = dbInvoice.userID
         )
       }.toSeq
     }
   }
-
 
 }
 

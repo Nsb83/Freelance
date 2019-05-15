@@ -2,8 +2,11 @@ package models
 
 import java.util.UUID
 
+import ai.x.play.json.Jsonx
 import com.mohiva.play.silhouette.api.{Identity, LoginInfo}
-import play.api.libs.json.{Json, OWrites}
+import play.api.libs.json.{Format, Json, OWrites}
+import play.api.mvc.PathBindable
+import slick.lifted.MappedTo
 
 
 /**
@@ -16,7 +19,7 @@ import play.api.libs.json.{Json, OWrites}
   * @param email Maybe the email of the authenticated provider.
   */
 case class User(
-                 userID: UUID,
+                 userID: UserID,
                  loginInfo: LoginInfo,
                  firstName: String,
                  lastName: String,
@@ -26,7 +29,7 @@ case class User(
                  SIRENNumber: String) extends Identity
 
 case class DBUser(
-                   userID: String,
+                   userID: UserID,
                    firstName: String,
                    lastName: String,
                    fullName: String,
@@ -36,4 +39,23 @@ case class DBUser(
 
 object User {
   implicit val userWriter: OWrites[User] = Json.writes[User]
+}
+
+case class UserID(value: String) extends AnyVal with MappedTo[String]
+object UserID {
+  implicit val formatter: Format[UserID] = Jsonx.formatAuto[UserID]
+  implicit def pathBinder(implicit stringBinder: PathBindable[String]): PathBindable[UserID] {
+    def bind(key: String, value: String): Either[String, UserID]
+
+    def unbind(key: String, value: UserID): String
+  } = new PathBindable[UserID] {
+    override def bind(key: String, value: String): Either[String, UserID] = {
+      for {
+        id <- stringBinder.bind(key, value).right
+      } yield {
+        UserID(id)
+      }
+    }
+    override def unbind(key: String, value: UserID): String = value.value.toString
+  }
 }

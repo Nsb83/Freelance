@@ -3,7 +3,7 @@ package daos.tables
 import java.util.UUID
 
 import daos.DAOSlick
-import models.{DBInvoice, InvoiceId}
+import models.{DBInvoice, InvoiceId, UserID}
 import org.joda.time.DateTime
 import com.github.tototoshi.slick.MySQLJodaSupport._
 
@@ -17,12 +17,14 @@ trait InvoiceDAOTables extends DAOSlick {
     def date = column[DateTime]("date")
     def number = column[String]("number")
     def clientId = column[String]("clientId")
+    def userId = column[UserID]("userId")
     def * = (
       id,
       publicId,
       date,
       number,
-      clientId) <> ((DBInvoice.apply _).tupled, DBInvoice.unapply)
+      clientId,
+      userId) <> ((DBInvoice.apply _).tupled, DBInvoice.unapply)
   }
   lazy val slickInvoice = TableQuery[InvoiceDBTable]
 }

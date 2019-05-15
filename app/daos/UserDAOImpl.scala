@@ -6,10 +6,10 @@ import com.mohiva.play.silhouette.api.LoginInfo
 import daos.tables.{PasswordInfoDAOTables, UserDAOTables}
 import play.api.libs.concurrent.ExecutionContextProvider
 import javax.inject.Inject
-import models.{DBUser, User}
+import models.{DBUser, User, UserID}
 import play.api.db.slick.DatabaseConfigProvider
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 
 /**
@@ -26,7 +26,7 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     * @param loginInfo The login info of the user to find.
     * @return The found user or None if no user for the given login info could be found.
     */
-  def find(loginInfo: LoginInfo) = {
+  def find(loginInfo: LoginInfo): Future[Option[User]] = {
     val userQuery = for {
       dbLoginInfo <- loginInfoQuery(loginInfo)
       dbUserLoginInfo <- slickUserLoginInfo.filter(_.loginInfoId === dbLoginInfo.id)
@@ -34,7 +34,7 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     } yield dbUser
     db.run(userQuery.result.headOption).map { dbUserOption =>
       dbUserOption.map { user =>
-        User(UUID.fromString(user.userID), loginInfo, user.firstName, user.lastName, user.fullName, user.email, user.phoneNumber, user.SIRENNumber)
+        User(user.userID, loginInfo, user.firstName, user.lastName, user.fullName, user.email, user.phoneNumber, user.SIRENNumber)
       }
     }
   }
@@ -46,9 +46,9 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     * @param userID The ID of the user to find.
     * @return The found user or None if no user for the given ID could be found.
     */
-  def find(userID: UUID) = {
+  def find(userID: UserID): Future[Option[User]] = {
     val query = for {
-      dbUser <- slickUser.filter(_.id === userID.toString)
+      dbUser <- slickUser.filter(_.id === userID)
       dbUserLoginInfo <- slickUserLoginInfo.filter(_.userID === dbUser.id)
       dbLoginInfo <- slickLoginInfo.filter(_.id === dbUserLoginInfo.loginInfoId)
     } yield (dbUser, dbLoginInfo)
@@ -56,7 +56,7 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
       resultOption.map {
         case (user, loginInfo) =>
           User(
-            UUID.fromString(user.userID),
+            user.userID,
             LoginInfo(loginInfo.providerID, loginInfo.providerKey),
             user.firstName,
             user.lastName,
@@ -74,8 +74,8 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     * @param user The user to save.
     * @return The saved user.
     */
-  def save(user: User) = {
-    val dbUser = DBUser(user.userID.toString, user.firstName, user.lastName, user.fullName, user.email, user.phoneNumber, user.SIRENNumber)
+  def save(user: User): Future[User] = {
+    val dbUser = DBUser(user.userID, user.firstName, user.lastName, user.fullName, user.email, user.phoneNumber, user.SIRENNumber)
     val dbLoginInfo = DBLoginInfo(None, user.loginInfo.providerID, user.loginInfo.providerKey)
     // We don't have the LoginInfo id so we try to get it first.
     // If there is no LoginInfo yet for this user we retrieve the id on insertion.

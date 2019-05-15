@@ -1,7 +1,7 @@
 package daos.tables
 
 import daos.DAOSlick
-import models.DBClient
+import models.{DBClient, UserID}
 
 trait ClientDAOTables extends DAOSlick {
 
@@ -19,6 +19,7 @@ trait ClientDAOTables extends DAOSlick {
     def phoneNumber = column[String]("phoneNumber")
     def VATNumber = column[String]("VATNumber")
     def isActive = column[Boolean]("isActive")
+    def userId = column[UserID]("userId")
     def * = (
       id,
       companyName,
@@ -30,7 +31,8 @@ trait ClientDAOTables extends DAOSlick {
       email,
       phoneNumber,
       VATNumber,
-      isActive) <> ((DBClient.apply _).tupled, DBClient.unapply)
+      isActive,
+      userId) <> ((DBClient.apply _).tupled, DBClient.unapply)
 
 
     def toUpdate = (
@@ -44,8 +46,8 @@ trait ClientDAOTables extends DAOSlick {
       email,
       phoneNumber,
       VATNumber,
-      isActive
-    ) <> ((DBClient.apply _).tupled, DBClient.unapply)
+      isActive,
+      userId) <> ((DBClient.apply _).tupled, DBClient.unapply)
   }
 
   lazy val slickClient = TableQuery[ClientDBTable]

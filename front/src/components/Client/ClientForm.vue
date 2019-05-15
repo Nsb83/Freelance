@@ -51,7 +51,6 @@
                     v-model="form.VATNumber"
                     label="Numéro de TVA"
             ></v-text-field>
-
             <v-checkbox
                     v-model="form.isActive"
                     label="Est actif ?"
@@ -80,9 +79,9 @@
 </template>
 
 <script>
-    import {store} from 'vuex';
-    import clientList from './ClientList.vue'
+    import { store } from 'vuex';
     import { bus } from '../../main';
+    import { mapGetters } from 'vuex';
 
     export default {
         data: () => ({
@@ -97,7 +96,8 @@
                 phoneNumber: '',
                 VATNumber:'',
                 email: '',
-                isActive: false
+                isActive: false,
+                userId: ''
             },
             snackbar: {
                 showSnackbar: false,
@@ -113,18 +113,17 @@
             ]
         }),
         computed: {
-            apiRoutes() {
-                return this.$store.state.apiRoutes
-            }
+            ...mapGetters([ 'apiRoutes', 'user'])
         },
         methods: {
             validate() {
+                this.form.userId = this.user.userID;
                 if (this.$refs.form.validate()) {
                     this.$http.post(this.apiRoutes.post.createClient, this.form).then(
                         result => {
                             this.snackbar.showSnackbar = true;
+                            this.$refs.form.reset();
                             bus.$emit('getAllClients');
-
                         }
                     )
                 }

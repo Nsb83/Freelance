@@ -8,7 +8,7 @@ import com.mohiva.play.silhouette.api.util.PasswordHasher
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.SignUpForm
 import javax.inject.Inject
-import models.User
+import models.{User, UserID}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{AbstractController, ControllerComponents}
 import services.UserService
@@ -53,7 +53,7 @@ class SignUpController @Inject() (
           case None =>
             val authInfo = passwordHasher.hash(data.password)
             val user = User(
-              userID = UUID.randomUUID(),
+              userID = UserID(UUID.randomUUID.toString),
               loginInfo = loginInfo,
               firstName = data.firstName,
               lastName = data.lastName,

@@ -1,14 +1,14 @@
 package daos
 
 
-import daos.tables.ClientDAOTables
+import daos.tables.{ClientDAOTables, UserDAOTables}
 import javax.inject.Inject
-import models.DBClient
+import models.{DBClient, UserID}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ClientDAOImpl @Inject() (override protected val dbConfigProvider: _root_.play.api.db.slick.DatabaseConfigProvider)(implicit val executionContext: ExecutionContext)
-  extends ClientDAO with ClientDAOTables {
+  extends ClientDAO with ClientDAOTables with UserDAOTables {
 
   import profile.api._
 
@@ -26,7 +26,8 @@ class ClientDAOImpl @Inject() (override protected val dbConfigProvider: _root_.p
           res.email,
           res.phoneNumber,
           res.VATNumber,
-          res.isActive
+          res.isActive,
+          res.userId
         )
       }
     }
@@ -44,13 +45,14 @@ class ClientDAOImpl @Inject() (override protected val dbConfigProvider: _root_.p
       email = client.email,
       phoneNumber = client.phoneNumber,
       VATNumber = client.VATNumber,
-      isActive = client.isActive
+      isActive = client.isActive,
+      userId = client.userId
     )
     db.run(slickClient.insertOrUpdate(dbClient)).map(_ => client)
   }
 
-  def findAll: Future[Seq[DBClient]] = {
-    db.run(slickClient.result)
+  def findAll(userId: UserID): Future[Seq[DBClient]] = {
+    db.run(slickClient.filter(_.userId === userId).result)
   }
 
   def delete(clientId: String): Future[Int] = {

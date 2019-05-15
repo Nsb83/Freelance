@@ -1,4 +1,17 @@
 <template>
+    <div>
+        <v-card color="primary" class="white--text p-1 m-1">
+            <v-card-title primary-title>
+                <div>
+                    <div class="headline">{{ user.fullName }}</div>
+                    <div >{{ user.email }}</div>
+                    <div >{{ user.phoneNumber }}</div>
+                    <div >{{ user.SIRENNumber }}</div>
+                </div>
+            </v-card-title>
+
+        </v-card>
+
 
     <v-list class=" white--text p-1">
         <router-link class="no-wrap-words nav-link white--text secondary" :to="{ name: 'ClientTabs' }">
@@ -22,11 +35,22 @@
             </v-list-tile>
         </router-link>
     </v-list>
+    </div>
 </template>
 
 <script>
+    import { mapGetters, mapActions } from 'vuex';
+    import { store } from '../store';
+
     export default {
-        name: "SideMenu"
+        name: "SideMenu",
+
+        computed: {
+            ...mapGetters(['user'])
+        },
+        methods: {
+            ...mapActions(['removeUser', 'updateUser']),
+        }
     }
 </script>
 

@@ -1,6 +1,7 @@
 <template>
     <v-app id="inspire">
         <v-navigation-drawer
+                v-if="isUserConnected"
                 v-model="drawer"
                 clipped
                 fixed
@@ -11,6 +12,12 @@
         <v-toolbar app fixed clipped-left>
             <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
             <v-toolbar-title>Freelance Facturer</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+                <v-btn flat @click="disconnect">
+                    <v-icon>close</v-icon> Déconnexion
+                </v-btn>
+            </v-toolbar-items>
         </v-toolbar>
         <v-content >
             <v-container fluid fill-height class="p-1">
@@ -29,42 +36,27 @@
 
 
 
-<!--<template>-->
-    <!--<v-app class="m-1">-->
-        <!--<v-navigation-drawer-->
-            <!--absolute-->
-            <!--v-model="drawer"-->
-            <!--clipped-->
-            <!--fixed-->
-            <!--app-->
-        <!--&gt;-->
-            <!--<SideMenu></SideMenu>-->
-        <!--</v-navigation-drawer>-->
-        <!--<v-content>-->
-            <!--<v-container>-->
-                <!--<v-flex>-->
-                    <!--<router-view></router-view>-->
-                <!--</v-flex>-->
-
-            <!--</v-container>-->
-
-        <!--</v-content>-->
-
-    <!--</v-app>-->
-<!--</template>-->
 <script>
-    import { mapGetters } from 'vuex';
+    import { mapGetters, mapActions } from 'vuex';
     import InvoiceTabs from "./Invoice/InvoiceTabs.vue";
     import SideMenu from "./SideMenu.vue";
+    import Vue from 'vue';
 
     export default {
         name: 'App',
         components: {InvoiceTabs, SideMenu},
-        // components: {SideMenu, ClientTabs},
         computed: {
-            ...mapGetters([
-                'apiRoutes'
-            ])
+            ...mapGetters([ 'apiRoutes', 'isUserConnected' ])
+        },
+        methods: {
+            ...mapActions([
+                'removeUser'
+            ]),
+            disconnect: function () {
+                Vue.ls.remove("jwt");
+                this.removeUser();
+                this.$router.push({name: 'login'});
+            }
         },
         data() {
             return {

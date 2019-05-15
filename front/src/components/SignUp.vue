@@ -1,9 +1,9 @@
 <template>
-    <v-dialog v-model="isActive" max-width="700">
+    <div class="m-5">
         <v-card>
             <v-card-text>
                 <v-form>
-                    <v-form fill-width v-model="valid" ref="form" lazy-validation autocomplete="off">
+                    <v-form fill-width lazy-validation autocomplete="off">
                         <v-text-field
                                 v-model="form.firstName"
                                 label="Prénom"
@@ -54,27 +54,30 @@
                 <v-spacer></v-spacer>
                 <v-btn
                         flat
-                        @click.native="isActive = false"
+                        @click.native="backToMainPage()"
                         color="primary"
                 >
                     Annuler
                 </v-btn>
                 <v-btn
                         flat
-                        :disabled="!valid"
-                        @click="onSubmit"
+                        @click="signUp"
                         color="primary"
                 >
                     Valider
                 </v-btn>
             </v-card-actions>
         </v-card>
-    </v-dialog>
+    </div>
 </template>
 
 <script>
-    export default {
+    import { mapGetters } from 'vuex';
 
+    export default {
+        computed: {
+            ...mapGetters(['apiRoutes'])
+        },
         data() {
             return {
                 valid: true,
@@ -92,6 +95,21 @@
                 }
             }
         },
+        methods: {
+            backToMainPage() {
+                this.$router.push({ path: '/login' })
+            },
+            signUp() {
+                this.$http.post(this.apiRoutes.post.signUp, this.form).then(
+                    response => {
+                        this.$router.push({ path: '/login' });
+                    },
+                    response => {
+                        console.log(response)
+                }
+                )
+            }
+        }
     }
 </script>
 

@@ -2,20 +2,19 @@
 
 # --- !Ups
 
-CREATE TABLE `Service`(
-                        `id` VARCHAR(255) NOT NULL,
-                        `invoiceId` BIGINT(20) NOT NULL,
-                        `serviceName` TEXT NOT NULL,
-                        `quantity` DECIMAL NOT NULL,
-                        `unitPrice` DECIMAL NOT NULL,
-                        `VATRate` DECIMAL NOT NULL,
-                        `totalDutyFreePrice` DECIMAL,
-                        `VATTotal` DECIMAL,
-                        `totalPrice` DECIMAL,
-                        PRIMARY KEY (`id`),
-                        CONSTRAINT FOREIGN KEY (`invoiceId`) REFERENCES `Invoice` (`id`)
+CREATE TABLE `Invoice`(
+                          `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+                          `publicId` VARCHAR(255) NOT NULL,
+                          `clientId` VARCHAR(255) NOT NULL,
+                          `date` DATETIME NOT NULL,
+                          `number` VARCHAR(255) NOT NULL,
+                          `userId` VARCHAR(255) NOT NULL,
+
+                          PRIMARY KEY (`id`),
+                          CONSTRAINT FOREIGN KEY (`clientId`) REFERENCES `Client` (`id`),
+                          CONSTRAINT FOREIGN KEY (`userId`) REFERENCES `User` (`id`)
 );
 
 
 # --- !Downs
-DROP TABLE `Service`;
+DROP TABLE `Invoice`;

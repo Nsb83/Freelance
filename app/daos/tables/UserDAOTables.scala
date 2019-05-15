@@ -2,14 +2,14 @@ package daos.tables
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import daos.DAOSlick
-import models.{DBUser, User}
+import models.{DBUser, User, UserID}
 
 trait UserDAOTables extends DAOSlick {
 
   import profile.api._
 
   class UserDBTable(tag: Tag) extends Table[DBUser](tag, "User"){
-    def id = column[String]("id", O.PrimaryKey)
+    def id = column[UserID]("id", O.PrimaryKey)
     def firstName = column[String]("firstName")
     def lastName = column[String]("lastName")
     def fullName = column[String]("fullName")
@@ -34,13 +34,13 @@ trait UserDAOTables extends DAOSlick {
 
   case class DBUserLoginInfo (
                                id: Option[Long],
-                               userID: String,
+                               userID: UserID,
                                loginInfoId: Long)
 
 
   class UserLoginInfoDBTable(tag: Tag) extends Table[DBUserLoginInfo](tag, "Userlogininfo") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
-    def userID = column[String]("userID")
+    def userID = column[UserID]("userID")
     def loginInfoId = column[Long]("loginInfoId")
     def * = (id.?, userID, loginInfoId) <> (DBUserLoginInfo.tupled, DBUserLoginInfo.unapply)
   }

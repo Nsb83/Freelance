@@ -20,6 +20,7 @@
 
 <script>
     import { bus } from '../../main';
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "InvoiceList",
@@ -31,9 +32,7 @@
             bus.$off('getAllInvoices');
         },
         computed: {
-            apiRoutes(){
-                return this.$store.state.apiRoutes
-            }
+            ...mapGetters([ 'apiRoutes', 'user'])
         },
         data() {
             return {
@@ -47,17 +46,11 @@
                 services: [],
             }
         },
-        watch:{
-            apiRoutes(){
-                return this.$store.state.apiRoutes
-            }
-        },
         methods: {
             getAllInvoices: function() {
-                this.$http.get(this.apiRoutes.get.getAllInvoicesWithClient).then(
+                this.$http.get(this.apiRoutes.get.getAllInvoicesWithClient(this.user.userID)).then(
                     response => {
                         this.invoices = response.body;
-console.log(this.invoices)
                     },
                     response => {
                         console.log(response)

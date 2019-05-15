@@ -45,6 +45,7 @@
 <script>
     import { store } from 'vuex';
     import { bus } from '../../main';
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "ClientList",
@@ -56,9 +57,7 @@
             bus.$off('getAllClients');
         },
         computed: {
-            apiRoutes(){
-                return this.$store.state.apiRoutes
-            }
+            ...mapGetters([ 'apiRoutes', 'user' ])
         },
         data() {
             return {
@@ -85,10 +84,9 @@
         },
         methods: {
             getAllClients() {
-                this.$http.get(this.apiRoutes.get.getClients).then(
+                this.$http.get(this.apiRoutes.get.getClients(this.user.userID)).then(
                     response => {
                         this.clients = response.body;
-                        console.log(this.clients)
                     },
                     response => {
                         console.log(response)
@@ -99,8 +97,6 @@
               this.$http.get(this.apiRoutes.get.getInvoicesByClient(clientId)).then(
                   response => {
                       this.clientInvoices = response.body;
-                      console.log(this.clientInvoices)
-
                   }
               )
             },

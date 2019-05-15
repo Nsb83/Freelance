@@ -10,13 +10,12 @@ import slick.lifted.MappedTo
 
 import scala.concurrent.Future
 
-//changer les id pour un long pour permettre de retrouver le dernier en DB
-
 case class DBInvoice (id: InvoiceId = InvoiceId(0),
                       publicId: String,
                       date: DateTime,
                       number: String,
-                      clientId: String)
+                      clientId: String,
+                      userID: UserID)
 
 case class InvoiceId(value: Long) extends AnyVal with MappedTo[Long]
 
@@ -47,7 +46,9 @@ case class Invoice (id: InvoiceId,
                     date: DateTime,
                     number: String,
                     clientId: String,
-                    services: Seq[DBService])
+                    userID: UserID,
+                    services: Seq[DBService]
+                    )
 
 
 object Invoice {
@@ -59,13 +60,13 @@ case class FullInvoice (id: InvoiceId,
                         date: DateTime,
                         number: String,
                         client: String,
+                        userID: UserID,
                         services: Seq[Service],
                         totalHT: BigDecimal,
                         totalTVAs: Map[BigDecimal, BigDecimal],
                         totalTTC: BigDecimal)
 
 object FullInvoice {
-  //  implicit val formatter: OFormat[FullInvoice] = Json.format[FullInvoice]
   implicit val writer: OWrites[FullInvoice] = Json.writes[FullInvoice]
 
   def getCalculatedInvoice(invoice: Invoice): FullInvoice = {
@@ -74,13 +75,14 @@ object FullInvoice {
     val VATRates: Map[BigDecimal, BigDecimal] = calculatedService.groupBy(_.VATRate).map { case (vat, rate) =>
       (vat, rate.map(_.VATTotal).sum)
     }
-    FullInvoice(invoice.id, invoice.publicId, invoice.date, invoice.number, invoice.clientId, calculatedService, calculatedService.map(_.totalDutyFreePrice).sum, VATRates, calculatedService.map(_.totalPrice).sum)
+    FullInvoice(invoice.id, invoice.publicId, invoice.date, invoice.number, invoice.clientId, invoice.userID, calculatedService, calculatedService.map(_.totalDutyFreePrice).sum, VATRates, calculatedService.map(_.totalPrice).sum)
   }
 }
 case class InvoiceWithClient (id: InvoiceId,
                               publicId: String,
                               date: DateTime,
                               number: String,
+                              userID: UserID,
                               services: Seq[DBService],
                               client: DBClient)
 
@@ -93,6 +95,7 @@ case class FullInvoiceWithClient (id: InvoiceId,
                         date: DateTime,
                         number: String,
                         client: DBClient,
+                        userID: UserID,
                         services: Seq[Service],
                         totalHT: BigDecimal,
                         totalTVAs: Map[BigDecimal, BigDecimal],
@@ -107,7 +110,7 @@ object FullInvoiceWithClient {
     val VATRates: Map[BigDecimal, BigDecimal] = calculatedService.groupBy(_.VATRate).map { case (vat, rate) =>
       (vat, rate.map(_.VATTotal).sum)
     }
-    FullInvoiceWithClient(invoiceWithClient.id, invoiceWithClient.publicId, invoiceWithClient.date, invoiceWithClient.number, invoiceWithClient.client, calculatedService, calculatedService.map(_.totalDutyFreePrice).sum, VATRates, calculatedService.map(_.totalPrice).sum)
+    FullInvoiceWithClient(invoiceWithClient.id, invoiceWithClient.publicId, invoiceWithClient.date, invoiceWithClient.number, invoiceWithClient.client, invoiceWithClient.userID, calculatedService, calculatedService.map(_.totalDutyFreePrice).sum, VATRates, calculatedService.map(_.totalPrice).sum)
   }
 }
 

@@ -10,16 +10,16 @@ GET     /assets/*file                               controllers.Assets.at(path="
 
 #Clients
 POST    /clients/create                             controllers.ClientController.newClient
-GET     /clients/findall                            controllers.ClientController.findAll
+GET     /clients/findAll/:userID                    controllers.ClientController.findAll(userID: models.UserID)
 GET     /clients/find/:id                           controllers.ClientController.find(id: String)
 DELETE  /clients/delete/:id                         controllers.ClientController.delete(id: String)
 
 #Invoice
-POST    /invoice/create/:clientId                   controllers.InvoiceController.createInvoice(clientId: String)
+POST    /invoice/create/:clientId/:userID           controllers.InvoiceController.createInvoice(clientId: String, userID: models.UserID)
 #GET     /invoice/getCompleteByClient/:clientId     controllers.InvoiceController.findAllCompleteInvoiceByClient(clientId: String)
 GET     /invoice/getByClient/:clientId              controllers.InvoiceController.findAllInvoiceByClient(clientId: String)
-GET     /invoice/findAll                            controllers.InvoiceController.findAllInvoices
-GET     /invoice/findAllWithClient                  controllers.InvoiceController.findAllInvoicesWithClient
+GET     /invoice/findAll/:userID                    controllers.InvoiceController.findAllInvoices(userID: models.UserID)
+GET     /invoice/findAllWithClient/:userID          controllers.InvoiceController.findAllInvoicesWithClient(userID: models.UserID)
 
 GET     /invoice/find/:invoiceId                    controllers.InvoiceController.getInvoices(invoiceId: models.InvoiceId)
 
@@ -30,5 +30,7 @@ GET     /signIn                                     controllers.ApplicationContr
 GET     /signUp                                     controllers.ApplicationController.signUp
 GET     /signOut                                    controllers.ApplicationController.signOut
 #POST   /authenticate/credentials                   controllers.CredentialsAuthController.authenticate
+
+GET     /checkConnected                             controllers.SignInController.checkConnected
 
 

@@ -3,7 +3,7 @@ package daos
 import java.util.UUID
 
 import com.mohiva.play.silhouette.api.LoginInfo
-import models.User
+import models.{User, UserID}
 
 import scala.concurrent.Future
 
@@ -27,7 +27,7 @@ trait UserDAO {
     * @param userID The ID of the user to find.
     * @return The found user or None if no user for the given ID could be found.
     */
-  def find(userID: UUID): Future[Option[User]]
+  def find(userID: UserID): Future[Option[User]]
 
   /**
     * Saves a user.

@@ -30,23 +30,24 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
                                   val executionContext: ExecutionContext)
   extends AbstractController(components)  {
 
-  def createUniqueChronologicalNumber: Future[String] = {
+  def createUniqueChronologicalNumber(userID: UserID): Future[Seq[String]] = {
     val actualYear = LocalDateTime.now().getYear.toString
-    invoiceDAO.findLastNumber.map { number =>
-      number.lastOption.map { x =>
-        val number = x.id.value
-          val year: Array[String] = x.number.split('-')
-          val yearToLong: Long = year(0).toLong
-          if (actualYear.toLong > yearToLong) {
-            actualYear + '-' + "%04d".format(1)
-          } else {
-            val numb = number + 1
-            yearToLong.toString + '-' + "%04d".format(numb)
-          }
-
-      }.getOrElse(actualYear + '-' + "%04d".format(1))
+    invoiceDAO.findLastNumberForUser(userID).map { numberList =>
+      val number = numberList.length.intValue()
+      numberList.map { x =>
+        val year: Array[String] = x.number.split('-')
+        val yearToLong: Long = year(0).toLong
+        if (actualYear.toLong > yearToLong) {
+          actualYear + '-' + "%04d".format(1)
+        } else {
+          val numb = number + 1
+          yearToLong.toString + '-' + "%04d".format(numb)
+        }
+      }
     }
   }
+
+
   def getLastInvoiceNumber: Future[Long] = {
     invoiceDAO.findLastNumber.map { list =>
       list.lastOption.map { number =>
@@ -60,18 +61,17 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
     Le reset à chaque nouveau début d'année
   */
 
-  def createInvoice(clientId: String) = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async(parse.json) { implicit req: SecuredRequest[DefaultEnv, JsValue] =>
-    println(req.body)
+  def createInvoice(clientId: String, userID: UserID) = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async(parse.json) { implicit req: SecuredRequest[DefaultEnv, JsValue] =>
     req.body.validate[InvoiceForm].fold(
       error => Future.successful(BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toJson(error)))),
       invoiceForm => {
-        // Récupérer le dernier id de DBInvoice
-        createUniqueChronologicalNumber.flatMap { number =>
+        createUniqueChronologicalNumber(userID).flatMap { number =>
           val dbInvoice = DBInvoice(
             publicId = UUID.randomUUID().toString,
             date = DateTime.now(),
-            number = number,
-            clientId = clientId
+            number = number.head,
+            clientId = clientId,
+            userID = userID
           )
           getLastInvoiceNumber.flatMap { number =>
             val numb  = number + 1
@@ -82,7 +82,7 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
                 serviceName = newService.serviceName,
                 quantity = newService.quantity,
                 unitPrice = newService.unitPrice,
-                VATRate = newService.VATRate
+                VATRate = newService.VATRate,
               )
             }
             invoiceDAO.saveInvoice(dbInvoice, services).map(_ => Ok)
@@ -128,8 +128,8 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
     }
   }
 
-  def findAllInvoices: Action[AnyContent] = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit req: SecuredRequest[DefaultEnv, AnyContent] =>
-    invoiceDAO.findAllInvoices.map { seqInvoice =>
+  def findAllInvoices(userID: UserID): Action[AnyContent] = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit req: SecuredRequest[DefaultEnv, AnyContent] =>
+    invoiceDAO.findAllInvoices(userID).map { seqInvoice =>
       val q = seqInvoice.map { invoice =>
         val x = FullInvoice.getCalculatedInvoice(invoice)
         Json.toJson(x)
@@ -138,8 +138,8 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
     }
   }
 
-  def findAllInvoicesWithClient: Action[AnyContent] = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit req: SecuredRequest[DefaultEnv, AnyContent] =>
-    invoiceDAO.findAllInvoicesWithClient.map { seqInvoiceWithClient =>
+  def findAllInvoicesWithClient(userID: UserID): Action[AnyContent] = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit req: SecuredRequest[DefaultEnv, AnyContent] =>
+    invoiceDAO.findAllInvoicesWithClient(userID).map { seqInvoiceWithClient =>
       val x = seqInvoiceWithClient.map { invoiceWithClient =>
         val fullInvoice = FullInvoiceWithClient.getCalculatedInvoice(invoiceWithClient)
         Json.obj(

@@ -8,7 +8,7 @@ import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import daos.ClientDAO
 import forms.ClientForm
 import javax.inject.Inject
-import models.DBClient
+import models.{DBClient, UserID}
 import play.api.libs.json.{JsError, JsValue, Json}
 import play.api.mvc.{AbstractController, AnyContent, ControllerComponents}
 import utils.auth.{DefaultEnv, WithProvider}
@@ -40,10 +40,10 @@ class ClientController @Inject()(
           email = clientForm.email,
           phoneNumber = clientForm.phoneNumber,
           VATNumber = clientForm.VATNumber,
-          isActive = clientForm.isActive
+          isActive = clientForm.isActive,
+          userId = clientForm.userId
         )
-        clientDAO.save(newClient).map { clientForm =>
-          Ok
+        clientDAO.save(newClient).map { _ => Ok
         }
       }
     )
@@ -65,8 +65,8 @@ class ClientController @Inject()(
     ))
   }
 
-  def findAll = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit req: SecuredRequest[DefaultEnv, AnyContent] =>
-    clientDAO.findAll().map { clients =>
+  def findAll(userID: UserID) = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit req: SecuredRequest[DefaultEnv, AnyContent] =>
+    clientDAO.findAll(userID).map { clients =>
       val data = clients.map(makeJsonClient)
       Ok(Json.toJson(data))
     }

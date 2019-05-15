@@ -12,7 +12,8 @@ case class DBClient (id: String,
                      email : String,
                      phoneNumber: String,
                      VATNumber: String,
-                     isActive : Boolean)
+                     isActive : Boolean,
+                     userId: UserID)
 
 object DBClient {
   implicit val formatter: OFormat[DBClient] = Json.format[DBClient]

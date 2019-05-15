@@ -1,17 +1,24 @@
-# Invoice schema
+# Client schema
 
 # --- !Ups
 
-CREATE TABLE `Invoice`(
-                       `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-                       `publicId` VARCHAR(255) NOT NULL,
-                       `clientId` VARCHAR(255) NOT NULL,
-                       `date` DATETIME NOT NULL,
-                       `number` VARCHAR(255) NOT NULL,
-PRIMARY KEY (`id`),
-CONSTRAINT FOREIGN KEY (`clientId`) REFERENCES `Client` (`id`)
+CREATE TABLE `Client`(
+                         `id` VARCHAR(255) NOT NULL PRIMARY KEY,
+                         `companyName` VARCHAR(100),
+                         `referentFirstName` VARCHAR(100),
+                         `referentLastName` VARCHAR (100),
+                         `adress` VARCHAR(255),
+                         `postalCode` VARCHAR (50),
+                         `city` VARCHAR (100),
+                         `email` VARCHAR(100),
+                         `phoneNumber` VARCHAR(100),
+                         `VATNumber` VARCHAR(100),
+                         `isActive` BOOLEAN,
+                         `userId` VARCHAR(255) NOT NULL,
+
+                         CONSTRAINT FOREIGN KEY (`userId`) REFERENCES `User` (`id`)
 );
 
 
 # --- !Downs
-DROP TABLE `Invoice`;
+DROP TABLE `Client`;
