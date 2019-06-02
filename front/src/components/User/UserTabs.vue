@@ -18,17 +18,17 @@
                 </v-tab-item>
 
 
-<!--                <v-tab-->
-<!--                        :key="1"-->
-<!--                        class="white&#45;&#45;text"-->
-<!--                >-->
-<!--                    Utilisateur-->
-<!--                </v-tab>-->
-<!--                <v-tab-item-->
-<!--                        :key="1">-->
-<!--                    <SignUp></SignUp>-->
+                <v-tab
+                        :key="1"
+                        class="white--text"
+                >
+                    Utilisateur
+                </v-tab>
+                <v-tab-item
+                        :key="1">
+                    <SignUp :update="true"></SignUp>
 
-<!--                </v-tab-item>-->
+                </v-tab-item>
             </v-tabs>
         </v-flex>
     </v-layout>
@@ -40,7 +40,7 @@
     import SignUp from './SignUp.vue';
 
     export default {
-        name: 'UserTabes',
+        name: 'UserTabs',
         components: { Bank, SignUp },
         computed: {
             ...mapGetters([

@@ -65,6 +65,7 @@
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn
+                        v-if="!update"
                         flat
                         @click.native="backToMainPage()"
                         color="primary"
@@ -88,7 +89,18 @@
 
     export default {
         computed: {
-            ...mapGetters(['apiRoutes'])
+            ...mapGetters(['apiRoutes', 'user'])
+        },
+        created: function() {
+            if(this.update) {
+                this.getUser(this.user.userID)
+            }
+        },
+        props:{
+          update: {
+              type: Boolean,
+              default: false
+          }
         },
         data() {
             return {
@@ -104,7 +116,7 @@
                     address: '',
                     postalCode: '',
                     city: '',
-                    SIRENNUmber: '',
+                    SIRENNumber: '',
                     password: '',
                     // passwordConfirm: ''
                 }
@@ -123,6 +135,20 @@
                         console.log(response)
                 }
                 )
+            },
+            getUser(userId) {
+                const userID = this.user.userID;
+                if(this.update) {
+                    this.form.userId = this.user.userId;
+                    this.form.firstName= this.user.firstName;
+                    this.form.lastName= this.user.lastName;
+                    this.form.email= this.user.email;
+                    this.form.phoneNumber= this.user.phoneNumber;
+                    this.form.address= this.user.address;
+                    this.form.postalCode= this.user.postalCode;
+                    this.form.city= this.user.city;
+                    this.form.SIRENNumber= this.user.SIRENNumber;
+                }
             }
         }
     }
