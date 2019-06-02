@@ -22,7 +22,7 @@
             ></v-text-field>
 
             <v-text-field
-                    v-model="form.adress"
+                    v-model="form.address"
                     label="Numéro et rue"
             ></v-text-field>
 
@@ -90,7 +90,7 @@
                 companyName: '',
                 referentFirstName: '',
                 referentLastName: '',
-                adress:'',
+                address:'',
                 postalCode:'',
                 city:'',
                 phoneNumber: '',

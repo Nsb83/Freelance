@@ -1,4 +1,4 @@
-# Invoice schema
+# Service schema
 
 # --- !Ups
 

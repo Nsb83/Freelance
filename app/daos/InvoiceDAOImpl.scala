@@ -1,16 +1,17 @@
 package daos
 
-import daos.tables.{ClientDAOTables, InvoiceDAOTables, ServiceDAOTables, UserDAOTables}
+import daos.tables.{BankDAOTables, ClientDAOTables, InvoiceDAOTables, ServiceDAOTables, UserDAOTables}
 import javax.inject.Inject
 import models._
 import org.joda.time.LocalDateTime
+import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.{JsValue, Json}
 
 import scala.collection.immutable
 import scala.concurrent.{ExecutionContext, Future}
 
-class InvoiceDAOImpl @Inject() (override protected val dbConfigProvider: _root_.play.api.db.slick.DatabaseConfigProvider)(implicit val executionContext: ExecutionContext)
-  extends InvoiceDAO with InvoiceDAOTables with ServiceDAOTables with ClientDAOTables with UserDAOTables {
+class InvoiceDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(implicit val executionContext: ExecutionContext)
+  extends InvoiceDAO with InvoiceDAOTables with ServiceDAOTables with ClientDAOTables with UserDAOTables with BankDAOTables {
 
   import profile.api._
 
@@ -172,6 +173,28 @@ class InvoiceDAOImpl @Inject() (override protected val dbConfigProvider: _root_.
       }.toSeq
     }
   }
+  def findCompleteInvoice(publicId: String): Future[Seq[InvoiceWithClient]] = {
+    val query = slickInvoice.filter(_.publicId === publicId)
+      .joinLeft(slickService).on(_.id === _.invoiceId)
+      .join(slickClient).on(_._1.clientId === _.id)
 
+    db.run(query.result).map { result =>
+      result.groupBy(_._1._1).map { tuple =>
+        val dbInvoice: DBInvoice = tuple._1
+        val services: Seq[DBService] = tuple._2.flatMap(_._1._2)
+        val client = tuple._2.map(_._2).head
+
+        InvoiceWithClient(
+          id = dbInvoice.id,
+          publicId = dbInvoice.publicId,
+          date = dbInvoice.date,
+          number = dbInvoice.number,
+          client = client,
+          services = services,
+          userID = dbInvoice.userID
+        )
+      }.toSeq
+      }
+    }
 }
 

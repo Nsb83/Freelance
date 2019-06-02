@@ -26,4 +26,8 @@ trait InvoiceDAO {
   def getInvoice(invoiceId: InvoiceId): Future[Seq[Invoice]]
 
   def findAllInvoicesWithClient(userID: UserID): Future[Seq[InvoiceWithClient]]
+
+  def findCompleteInvoice(publicId: String): Future[Seq[InvoiceWithClient]]
+
+//  def findCompleteInvoice(publicId: String): Future[InvoiceWithClient]
 }

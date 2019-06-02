@@ -5,7 +5,7 @@ import Login from './components/Login.vue';
 import SignUp from './components/SignUp.vue';
 
 export default [
-    { path: "*", redirect: '/ClientTabs'},
+    { path: "*", redirect: '/login'},
     {
         path: '/login',
         component: Login,

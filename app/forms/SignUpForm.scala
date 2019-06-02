@@ -14,6 +14,9 @@ object SignUpForm {
       "lastName" -> nonEmptyText,
       "email" -> email,
       "phoneNumber" -> nonEmptyText,
+      "address" -> nonEmptyText,
+      "postalCode" -> nonEmptyText,
+      "city" -> nonEmptyText,
       "SIRENNumber" -> nonEmptyText,
       "password" -> nonEmptyText
     )(Data.apply)(Data.unapply)
@@ -32,6 +35,9 @@ object SignUpForm {
                    lastName: String,
                    email: String,
                    phoneNumber: String,
+                   address: String,
+                   postalCode: String,
+                   city: String,
                    SIRENNumber: String,
                    password: String)
 }

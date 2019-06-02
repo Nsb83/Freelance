@@ -7,7 +7,7 @@ object ClientForm {
   case class ClientForm(companyName: String,
                         referentFirstName: String,
                         referentLastName: String,
-                        adress: String,
+                        address: String,
                         postalCode: String,
                         city: String,
                         email : String,

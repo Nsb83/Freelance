@@ -4,10 +4,11 @@ package daos
 import daos.tables.{ClientDAOTables, UserDAOTables}
 import javax.inject.Inject
 import models.{DBClient, UserID}
+import play.api.db.slick.DatabaseConfigProvider
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ClientDAOImpl @Inject() (override protected val dbConfigProvider: _root_.play.api.db.slick.DatabaseConfigProvider)(implicit val executionContext: ExecutionContext)
+class ClientDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(implicit val executionContext: ExecutionContext)
   extends ClientDAO with ClientDAOTables with UserDAOTables {
 
   import profile.api._
@@ -20,7 +21,7 @@ class ClientDAOImpl @Inject() (override protected val dbConfigProvider: _root_.p
           res.companyName,
           res.referentFirstName,
           res.referentLastName,
-          res.adress,
+          res.address,
           res.postalCode,
           res.city,
           res.email,
@@ -39,7 +40,7 @@ class ClientDAOImpl @Inject() (override protected val dbConfigProvider: _root_.p
       companyName = client.companyName,
       referentFirstName = client.referentFirstName,
       referentLastName = client.referentLastName,
-      adress = client.adress,
+      address = client.address,
       postalCode = client.postalCode,
       city = client.city,
       email = client.email,

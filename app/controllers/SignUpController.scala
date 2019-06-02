@@ -60,6 +60,9 @@ class SignUpController @Inject() (
               fullName = data.firstName + ' ' + data.lastName.toUpperCase(),
               email = data.email,
               phoneNumber = data.phoneNumber,
+              address = data.address,
+              postalCode = data.postalCode,
+              city = data.city,
               SIRENNumber = data.SIRENNumber
             )
             for {

@@ -26,6 +26,9 @@ case class User(
                  fullName: String,
                  email: String,
                  phoneNumber: String,
+                 address: String,
+                 postalCode: String,
+                 city: String,
                  SIRENNumber: String) extends Identity
 
 case class DBUser(
@@ -35,6 +38,9 @@ case class DBUser(
                    fullName: String,
                    email: String,
                    phoneNumber: String,
+                   address: String,
+                   postalCode: String,
+                   city: String,
                    SIRENNumber: String)
 
 object User {

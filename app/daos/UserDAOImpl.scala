@@ -34,7 +34,7 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     } yield dbUser
     db.run(userQuery.result.headOption).map { dbUserOption =>
       dbUserOption.map { user =>
-        User(user.userID, loginInfo, user.firstName, user.lastName, user.fullName, user.email, user.phoneNumber, user.SIRENNumber)
+        User(user.userID, loginInfo, user.firstName, user.lastName, user.fullName, user.email, user.phoneNumber, user.address, user.postalCode, user.city, user.SIRENNumber)
       }
     }
   }
@@ -63,6 +63,9 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
             user.fullName,
             user.email,
             user.phoneNumber,
+            user.address,
+            user.postalCode,
+            user.city,
             user.SIRENNumber)
       }
     }
@@ -75,7 +78,7 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     * @return The saved user.
     */
   def save(user: User): Future[User] = {
-    val dbUser = DBUser(user.userID, user.firstName, user.lastName, user.fullName, user.email, user.phoneNumber, user.SIRENNumber)
+    val dbUser = DBUser(user.userID, user.firstName, user.lastName, user.fullName, user.email, user.phoneNumber, user.address, user.postalCode, user.city, user.SIRENNumber)
     val dbLoginInfo = DBLoginInfo(None, user.loginInfo.providerID, user.loginInfo.providerKey)
     // We don't have the LoginInfo id so we try to get it first.
     // If there is no LoginInfo yet for this user we retrieve the id on insertion.

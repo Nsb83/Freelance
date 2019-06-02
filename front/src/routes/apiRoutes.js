@@ -21,7 +21,11 @@ export default {
         getAllInvoices: '/invoice/findAll',
         getAllInvoicesWithClient(userId) {
             return '/invoice/findAllWithClient/' + userId
+        },
+        exportInvoiceToPDF: function (publicId) {
+            return ('/invoice/exportPDF/invoice.pdf?publicId=' + publicId);
         }
+
     },
     delete:{
         deleteClient(clientId) {

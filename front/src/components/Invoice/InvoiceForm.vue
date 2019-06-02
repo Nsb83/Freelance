@@ -20,7 +20,7 @@
                             {{ this.client.referentLastName }}
                         </v-card-text>
                         <v-card-text v-if="client !== null" class="py-0">
-                            {{ this.client.adress }}
+                            {{ this.client.address }}
                         </v-card-text>
                         <v-card-text v-if="client !== null" class="py-0">
                             {{ this.client.postalCode }}
@@ -178,6 +178,7 @@
                     response => {
                         this.snackbar.showSnackbar = true;
                         bus.$emit('getAllInvoices');
+                        this.reset();
                     }
                 )
             },
@@ -218,13 +219,15 @@
                 this.form.services.splice(index, 1)
             },
             reset() {
+                this.clientId = '';
+                this.client = null;
                 this.form.services = [
                     {
                         serviceName: '',
                         quantity: '',
                         unitPrice: '',
                         VATRate: '',
-                    },
+                    }
                 ]
             }
         }

@@ -1,0 +1,192 @@
+@import org.joda.time.DateTime
+@(invoice: FullInvoiceWithClient, client: DBClient, services: Seq[Service], user: User, bank: DBBank)(implicit request: RequestHeader)
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Facture</title>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i" rel="stylesheet">
+    </head>
+    <style>
+    html, body {
+        font-family: 'Roboto', sans-serif;
+        font-size: 12px;
+    }
+    .title{
+        text-align: center;
+        font-size: 40px;
+        font-weight: 600;
+        margin-bottom: 60px;
+    }
+    .identity table {
+        padding: 0;
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 40px 0;
+    }
+    .identity td {
+        border-right: 1px solid black;
+        border-left: 1px solid black;
+        text-align: left;
+        width: 50%;
+        padding: 3px;
+    }
+    .first-row {
+        border-top: 1px solid black;
+    }
+    .last-row {
+        border-bottom: 1px solid black;
+    }
+    .identity {
+        margin-bottom: 40px;
+    }
+    .invoice-infos {
+        margin-left: 40px;
+        margin-bottom: 40px;
+    }
+    .services table {
+        margin-left: 40px;
+        margin-right: 60px;
+        width: 90%;
+    }
+    .services th {
+        text-align: center;
+        background-color: #78909C;
+    }
+    .services td {
+        padding: 3px;
+    }
+    .service-name {
+        width: 40%;
+    }
+    .quantity {
+        width: 20%;
+    }
+    .unit-price {
+        width: 20%;
+    }
+    .total-ht {
+        width: 20%;
+    }
+    .line-jump {
+        height: 30px;
+    }
+    .final-total {
+        background-color: #78909C;
+        font-weight: bold;
+        text-align: center;
+    }
+    .VAT {
+        text-align: center;
+        font-size: 9px;
+    }
+    .paiement-rules {
+        margin-top: 80px;
+        margin-left: 40px;
+    }
+    .paiement-rules p {
+        margin-top: 2px;
+        margin-bottom: 2px;
+    }
+    .penalty {
+        font-size: 10px;
+    }
+    .RIB {
+        margin-left: 10px;
+    }
+
+    @@page {
+        /* switch to landscape */
+        size: portrait;
+        padding-bottom: 0.5cm;
+
+
+    /* Default footers */
+
+    @@bottom-center {
+        font-size: 9px;
+        font-family: 'Roboto', sans-serif;
+        content: "@{user.fullName}, @{user.address}, @{user.postalCode} @{user.city} - SIREN : @user.SIRENNumber";
+    }
+    }
+
+
+</style>
+    <body>
+        <div class="title">Facture</div>
+        <div class="identity">
+            <table>
+                <tr >
+                    <td class="first-row"><b>@user.fullName</b></td>
+                    <td class="first-row"><b>Client : </b>@client.companyName</td>
+                </tr>
+                <tr>
+                    <td><b>Adresse : </b>@user.address</td>
+                    <td><b>A l'attention de </b>@client.referentFirstName @client.referentLastName</td>
+                </tr>
+                <tr>
+                    <td>@user.postalCode  @user.city</td>
+                    <td><b>Adresse : </b>@client.address</td>
+                </tr>
+                <tr>
+                    <td>@user.email</td>
+                    <td>@client.postalCode @client.city</td>
+                </tr>
+                <tr>
+                    <td>@user.phoneNumber</td>
+                    <td class="last-row"><b>Numéro de TVA : </b>@client.VATNumber</td>
+                </tr>
+                <tr>
+                    <td class="last-row"><b>SIREN : </b>@user.SIRENNumber</td>
+                </tr>
+            </table>
+        </div>
+        <div class="invoice-infos">
+            <p><b>Facture N° </b>@invoice.number</p>
+            <p><b>Date d'émission : </b>@invoice.date.toDate.format("dd/MM/yyyy")</p>
+        </div>
+        <div class="services">
+            <table>
+                <tr>
+                    <th class="service-name">Désignation des prestations</th>
+                    <th class="quantity">Quantité</th>
+                    <th class="unit-price">Prix Unitaire HT</th>
+                    <th class="total-ht">Prix Total HT</th>
+                </tr>
+
+                @for((services, index) <- services.zipWithIndex) {
+                <tr>
+                    <td>@{services.serviceName}</td>
+                    <td style="text-align: center">@{services.quantity}</td>
+                    <td style="text-align: right">@{services.unitPrice}</td>
+                    <td style="text-align: right">@{services.totalDutyFreePrice}</td>
+                </tr>
+                }
+                <tr class="line-jump"></tr>
+                <tr class="total">
+                    <td></td>
+                    <td></td>
+                    <td class="final-total">TOTAL HT</td>
+                    <td style="text-align:right">@invoice.totalHT EUR</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td class="VAT" colspan="2">TVA non applicable, art. 293B du CGI</td>
+                </tr>
+
+
+            </table>
+        </div>
+        <div class="paiement-rules">
+            <p><b>Conditions de paiement : </b>Paiement à réception par virement bancaire</p>
+            <p><b>Banque : </b>@bank.bankName<span class="RIB"><b>IBAN : </b>@bank.IBANNumber</span><span class="RIB"><b>BIC : </b>@bank.BICNumber</span></p>
+            <p class="penalty"><b>Pénalités de retard : </b> En cas de retard de paiement, une indemnité forfaitaire pour frais de
+                recouvrement d'un montant de 40 euros sera appliquée ainsi que des pénalités de retard de paiement égales
+                au taux d'intérêt appliqué à la BCE à son opération de refinancement la plus récente majorée de 10 points.</p>
+            <p class="penalty"><b>Conditions d'escompte : </b>Aucun escompte ne sera accordé pour paiement anticipé.</p>
+        </div>
+
+    </body>
+</html>

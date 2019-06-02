@@ -9,6 +9,9 @@ CREATE TABLE `User`(
                        `fullName` VARCHAR(255),
                        `email` VARCHAR(255),
                        `phoneNumber` VARCHAR(40),
+                       `address` TEXT,
+                       `postalCode` VARCHAR(40),
+                       `city` VARCHAR(100),
                        `SIRENNumber` VARCHAR(100),
                        PRIMARY KEY (`id`)
 );

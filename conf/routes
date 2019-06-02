@@ -23,6 +23,7 @@ GET     /invoice/findAllWithClient/:userID          controllers.InvoiceControlle
 
 GET     /invoice/find/:invoiceId                    controllers.InvoiceController.getInvoices(invoiceId: models.InvoiceId)
 
+#User
 GET     /                                           controllers.ApplicationController.index
 POST    /signIn                                     controllers.SignInController.submit
 POST    /signUp                                     controllers.SignUpController.signUp
@@ -33,4 +34,8 @@ GET     /signOut                                    controllers.ApplicationContr
 
 GET     /checkConnected                             controllers.SignInController.checkConnected
 
+#Bank
+POST    /bank/create/:userID                        controllers.BankController.newBank(userID: models.UserID)
 
+#ExportPDF
+GET     /invoice/exportPDF/invoice.pdf               controllers.InvoiceController.exportInvoiceToPdf(publicId: String)

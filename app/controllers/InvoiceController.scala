@@ -2,16 +2,18 @@ package controllers
 
 import java.util.UUID
 
+import com.builtamont.play.pdf.PdfGenerator
 import com.mohiva.play.silhouette.api.Silhouette
 import com.mohiva.play.silhouette.api.actions.SecuredRequest
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
-import daos.InvoiceDAO
+import daos.{BankDAO, InvoiceDAO, UserDAO}
 import forms.InvoiceForm.InvoiceForm
 import javax.inject.Inject
 import models._
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import org.joda.time.{DateTime, LocalDateTime}
+import play.api.{Configuration, Environment}
 import play.api.libs.json.JodaWrites._
 import play.api.libs.json.JodaReads._
 import play.api.libs.json._
@@ -22,18 +24,38 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
                                   components: ControllerComponents,
+                                  env: Environment,
+                                  config: Configuration,
                                   credentialsProvider: CredentialsProvider,
-                                  invoiceDAO: InvoiceDAO
+                                  invoiceDAO: InvoiceDAO,
+                                  userDAO: UserDAO,
+                                  bankDAO: BankDAO
                                  )
                                  (implicit
                                   assets: AssetsFinder,
-                                  val executionContext: ExecutionContext)
+                                  ex: ExecutionContext)
   extends AbstractController(components)  {
+
+  val pdfGen = new PdfGenerator(env)
+  pdfGen.loadLocalFonts(Seq(
+    "fonts/Roboto-Black.ttf",
+    "fonts/Roboto-BlackItalic.ttf",
+    "fonts/Roboto-Bold.ttf",
+    "fonts/Roboto-BoldItalic.ttf",
+    "fonts/Roboto-Italic.ttf",
+    "fonts/Roboto-Light.ttf",
+    "fonts/Roboto-LightItalic.ttf",
+    "fonts/Roboto-Medium.ttf",
+    "fonts/Roboto-MediumItalic.ttf",
+    "fonts/Roboto-Regular.ttf",
+    "fonts/Roboto-Thin.ttf",
+    "fonts/Roboto-ThinItalic.ttf"
+  ))
 
   def createUniqueChronologicalNumber(userID: UserID): Future[Seq[String]] = {
     val actualYear = LocalDateTime.now().getYear.toString
     invoiceDAO.findLastNumberForUser(userID).map { numberList =>
-      val number = numberList.length.intValue()
+      val number = numberList.length
       numberList.map { x =>
         val year: Array[String] = x.number.split('-')
         val yearToLong: Long = year(0).toLong
@@ -46,7 +68,6 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
       }
     }
   }
-
 
   def getLastInvoiceNumber: Future[Long] = {
     invoiceDAO.findLastNumber.map { list =>
@@ -69,7 +90,7 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
           val dbInvoice = DBInvoice(
             publicId = UUID.randomUUID().toString,
             date = DateTime.now(),
-            number = number.head,
+            number = number.headOption.getOrElse(LocalDateTime.now().getYear.toString + '-' + "%04d".format(1)),
             clientId = clientId,
             userID = userID
           )
@@ -91,6 +112,8 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
       }
     )
   }
+
+
 
 //  def findAllCompleteInvoiceByClient(clientId: String) = Action.async {
 //    invoiceDAO.findCompleteInvoiceByClient(clientId).map { invoices =>
@@ -154,4 +177,21 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
     }
   }
 
+  def exportInvoiceToPdf(publicId: String): Action[AnyContent] = Action.async { implicit r =>
+    invoiceDAO.findCompleteInvoice(publicId).flatMap { invoiceSeq =>
+      val invoice = invoiceSeq.head
+      val client = invoice.client
+      val services = invoice.services.map(_.toService)
+      val fullInvoice: FullInvoiceWithClient = FullInvoiceWithClient.getCalculatedInvoice(invoice)
+      userDAO.find(invoice.userID).flatMap { userOpt =>
+        userOpt.map { user =>
+          bankDAO.find(user.userID).map { bankOpt =>
+            bankOpt.map { bank =>
+              pdfGen.ok(views.html.exportPDFInvoice(fullInvoice, client, services, user, bank), config.get[String]("baseUrl"))
+            }.getOrElse(BadRequest)
+          }
+        }.getOrElse(Future.successful(BadRequest))
+      }
+    }
+  }
 }

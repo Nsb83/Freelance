@@ -22,6 +22,18 @@
                                 mask="## ## ## ## ##"
                         ></v-text-field>
                         <v-text-field
+                                v-model="form.address"
+                                label="Adresse"
+                        ></v-text-field>
+                        <v-text-field
+                                v-model="form.postalCode"
+                                label="Code Postal"
+                        ></v-text-field>
+                        <v-text-field
+                                v-model="form.city"
+                                label="Ville"
+                        ></v-text-field>
+                        <v-text-field
                                 v-model="form.SIRENNumber"
                                 label="Numéro SIREN"
                         ></v-text-field>
@@ -89,6 +101,9 @@
                     lastName: '',
                     email: '',
                     phoneNumber: '',
+                    address: '',
+                    postalCode: '',
+                    city: '',
                     SIRENNUmber: '',
                     password: '',
                     // passwordConfirm: ''

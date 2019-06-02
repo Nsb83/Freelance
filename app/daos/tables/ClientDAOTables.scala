@@ -12,7 +12,7 @@ trait ClientDAOTables extends DAOSlick {
     def companyName = column[String]("companyName")
     def referentFirstName = column[String]("referentFirstName")
     def referentLastName = column[String]("referentLastName")
-    def adress  = column[String]("adress")
+    def address  = column[String]("address")
     def postalCode = column[String]("postalCode")
     def city = column[String]("city")
     def email = column[String]("email")
@@ -25,7 +25,7 @@ trait ClientDAOTables extends DAOSlick {
       companyName,
       referentFirstName,
       referentLastName,
-      adress,
+      address,
       postalCode,
       city,
       email,
@@ -40,7 +40,7 @@ trait ClientDAOTables extends DAOSlick {
       companyName,
       referentFirstName,
       referentLastName,
-      adress,
+      address,
       postalCode,
       city,
       email,

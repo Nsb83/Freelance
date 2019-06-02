@@ -12,6 +12,9 @@
                 <td class="text-center">{{ props.item.client }}</td>
                 <td class="text-center">{{ formatDateTime(props.item.date) }}</td>
                 <td class="text-center">{{ props.item.totalTTC }} €</td>
+                <v-btn slot="activator" icon class="mx-0" :href="apiRoutes.get.exportInvoiceToPDF(props.item.publicId)">
+                    <v-icon color="secondary">delete</v-icon>
+                </v-btn>
             </template>
         </v-data-table>
     </v-content>
@@ -51,6 +54,7 @@
                 this.$http.get(this.apiRoutes.get.getAllInvoicesWithClient(this.user.userID)).then(
                     response => {
                         this.invoices = response.body;
+                        console.log(this.invoices)
                     },
                     response => {
                         console.log(response)
