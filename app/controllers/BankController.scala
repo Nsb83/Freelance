@@ -8,7 +8,7 @@ import forms.BankForm.BankForm
 import javax.inject.Inject
 import models.{DBBank, UserID}
 import play.api.libs.json.{JsError, JsValue, Json}
-import play.api.mvc.{AbstractController, ControllerComponents}
+import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 import utils.auth.{DefaultEnv, WithProvider}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -22,7 +22,7 @@ class BankController @Inject()(
                                 val executionContext: ExecutionContext)
         extends AbstractController(components) {
 
-  def newBank(userId: UserID) = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async(parse.json) { implicit request: SecuredRequest[DefaultEnv, JsValue]  =>
+  def saveBank(userId: UserID): Action[JsValue] = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async(parse.json) { implicit request: SecuredRequest[DefaultEnv, JsValue]  =>
     request.body.validate[BankForm].fold(
       error => Future.successful(BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toJson(error)))),
       newBankForm => {
@@ -36,10 +36,11 @@ class BankController @Inject()(
       }
     )
   }
-  def findMyBank(userId: UserID) = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async(parse.json) { implicit request: SecuredRequest[DefaultEnv, JsValue]  =>
+  def findMyBank(userId: UserID) = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit request: SecuredRequest[DefaultEnv, AnyContent]  =>
     bankDAO.find(userId).map { bankOpt =>
       val myBank = bankOpt.map { bank =>
         Json.obj(
+          "id" -> bank.id,
           "bankName" -> bank.bankName,
           "BICNumber" -> bank.BICNumber,
           "IBANNumber" -> bank.IBANNumber

@@ -4,9 +4,9 @@
             <v-card-title primary-title>
                 <div>
                     <div class="headline">{{ user.fullName }}</div>
-                    <div >{{ user.email }}</div>
-                    <div >{{ user.phoneNumber }}</div>
-                    <div >{{ user.SIRENNumber }}</div>
+                    <div><v-icon color="white">email</v-icon>{{ user.email }}</div>
+                    <div><v-icon color="white">phone</v-icon>{{ user.phoneNumber }}</div>
+                    <div><v-icon color="white">work_outline</v-icon>{{ user.SIRENNumber }}</div>
                 </div>
             </v-card-title>
 
@@ -33,6 +33,16 @@
                     <v-list-tile-title>Factures</v-list-tile-title>
                 </v-list-tile-content>
             </v-list-tile>
+        </router-link>
+            <router-link class="no-wrap-words nav-link white--text secondary" :to="{ name: 'UserTabs' }">
+                <v-list-tile class="mt-2">
+                    <v-list-tile-action>
+                        <v-icon color="white">settings</v-icon>
+                    </v-list-tile-action>
+                    <v-list-tile-content>
+                        <v-list-tile-title>Paramètres</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
         </router-link>
     </v-list>
     </div>

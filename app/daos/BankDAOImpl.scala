@@ -23,15 +23,16 @@ class BankDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
     db.run(slickBank.insertOrUpdate(dbBank).map(_ => bank))
   }
 
+
   def find(userID: UserID): Future[Option[DBBank]] = {
-    db.run(slickUser.filter(_.id === userID).join(slickBank).on(_.id === _.userId).result.headOption).map { bankOpt =>
+    db.run(slickBank.filter(_.userId === userID).result.headOption).map { bankOpt =>
       bankOpt.map { bank =>
         DBBank(
-          bank._2.id,
-          bank._2.bankName,
-          bank._2.BICNumber,
-          bank._2.IBANNumber,
-          bank._2.userId
+          bank.id,
+          bank.bankName,
+          bank.BICNumber,
+          bank.IBANNumber,
+          bank.userId
         )
       }
     }

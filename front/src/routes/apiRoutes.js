@@ -2,6 +2,9 @@ export default {
     post: {
         signUp: '/signUp',
         login: '/signIn',
+        createBank: function(userId) {
+            return '/bank/create/' + userId
+        },
         createClient: '/clients/create',
         createInvoice: function(clientId, userId) {
             return '/invoice/create/' + clientId + '/' + userId
@@ -23,7 +26,10 @@ export default {
             return '/invoice/findAllWithClient/' + userId
         },
         exportInvoiceToPDF: function (publicId) {
-            return ('/invoice/exportPDF/invoice.pdf?publicId=' + publicId);
+            return '/invoice/exportPDF/invoice.pdf?publicId=' + publicId
+        },
+        getBank: function (userId) {
+            return '/bank/find/' + userId
         }
 
     },

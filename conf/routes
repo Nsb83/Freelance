@@ -35,7 +35,8 @@ GET     /signOut                                    controllers.ApplicationContr
 GET     /checkConnected                             controllers.SignInController.checkConnected
 
 #Bank
-POST    /bank/create/:userID                        controllers.BankController.newBank(userID: models.UserID)
+POST    /bank/create/:userId                        controllers.BankController.saveBank(userId: models.UserID)
+GET     /bank/find/:userId                           controllers.BankController.findMyBank(userId: models.UserID)
 
 #ExportPDF
 GET     /invoice/exportPDF/invoice.pdf               controllers.InvoiceController.exportInvoiceToPdf(publicId: String)
