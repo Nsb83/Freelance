@@ -7,6 +7,7 @@ CREATE TABLE `Invoice`(
                           `publicId` VARCHAR(255) NOT NULL,
                           `clientId` VARCHAR(255) NOT NULL,
                           `date` DATETIME NOT NULL,
+                          `period` VARCHAR(255) NOT NULL,
                           `number` VARCHAR(255) NOT NULL,
                           `userId` VARCHAR(255) NOT NULL,
 

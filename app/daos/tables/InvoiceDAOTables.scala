@@ -15,6 +15,7 @@ trait InvoiceDAOTables extends DAOSlick {
     def id = column[InvoiceId]("id", O.PrimaryKey, O.AutoInc)
     def publicId = column[String]("publicId")
     def date = column[DateTime]("date")
+    def period = column[String]("period")
     def number = column[String]("number")
     def clientId = column[String]("clientId")
     def userId = column[UserID]("userId")
@@ -22,6 +23,7 @@ trait InvoiceDAOTables extends DAOSlick {
       id,
       publicId,
       date,
+      period,
       number,
       clientId,
       userId) <> ((DBInvoice.apply _).tupled, DBInvoice.unapply)

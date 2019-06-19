@@ -90,6 +90,7 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
           val dbInvoice = DBInvoice(
             publicId = UUID.randomUUID().toString,
             date = DateTime.now(),
+            period = invoiceForm.period,
             number = number.headOption.getOrElse(LocalDateTime.now().getYear.toString + '-' + "%04d".format(1)),
             clientId = clientId,
             userID = userID

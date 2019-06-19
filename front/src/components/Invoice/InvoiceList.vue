@@ -12,8 +12,11 @@
                 <td class="text-center">{{ props.item.client }}</td>
                 <td class="text-center">{{ formatDateTime(props.item.date) }}</td>
                 <td class="text-center">{{ props.item.totalTTC }} €</td>
-                <v-btn slot="activator" icon class="mx-0" :href="apiRoutes.get.exportInvoiceToPDF(props.item.publicId)">
-                    <v-icon color="secondary">delete</v-icon>
+                <v-btn v-if="bankId!== null" slot="activator" icon class="mx-0" :href="apiRoutes.get.exportInvoiceToPDF(props.item.publicId)">
+                    <v-icon color="secondary">print</v-icon>
+                </v-btn>
+                <v-btn v-else icon class="mx-0" disabled>
+                    <v-icon>print</v-icon>
                 </v-btn>
             </template>
         </v-data-table>
@@ -30,6 +33,7 @@
         created: function() {
             this.getAllInvoices();
             bus.$on('getAllInvoices', this.getAllInvoices);
+            // this.getBank();
         },
         beforeDestroy: function() {
             bus.$off('getAllInvoices');
@@ -47,6 +51,7 @@
                          ],
                 invoices: [],
                 services: [],
+                bankId: null
             }
         },
         methods: {
@@ -64,6 +69,15 @@
             formatDateTime(date) {
                 const moment = this.$moment(date);
                 return moment.format('LL')
+            },
+            getBank() {
+                this.$http.get(this.apiRoutes.get.getBank(this.user.userID)).then(
+                    response => {
+                        this.bankId = response.body.id;
+                    }, response => {
+                        console.log(response)
+                    }
+                )
             }
 
         }

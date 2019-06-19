@@ -9,9 +9,6 @@ CREATE TABLE `Service`(
                           `quantity` DECIMAL NOT NULL,
                           `unitPrice` DECIMAL NOT NULL,
                           `VATRate` DECIMAL NOT NULL,
-                          `totalDutyFreePrice` DECIMAL,
-                          `VATTotal` DECIMAL,
-                          `totalPrice` DECIMAL,
                           PRIMARY KEY (`id`),
                           CONSTRAINT FOREIGN KEY (`invoiceId`) REFERENCES `Invoice` (`id`)
 );

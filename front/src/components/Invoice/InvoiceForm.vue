@@ -3,7 +3,7 @@
 
         <v-container>
             <v-layout>
-                <v-flex md5>
+                <v-flex sm6>
                     <v-autocomplete
                             label="client"
                             v-model="clientId"
@@ -11,6 +11,10 @@
                             @change="handleClientChange()"
                     >
                     </v-autocomplete>
+                    <v-text-field
+                            v-model="form.period"
+                            label="Période couverte par la facture : "
+                    ></v-text-field>
                 </v-flex>
                 <v-spacer></v-spacer>
                 <v-flex md5>
@@ -39,6 +43,13 @@
                     </v-card>
                 </v-flex>
             </v-layout>
+        </v-container>
+
+        <v-container grid-list-xs>
+            <v-flex sm6>
+
+            </v-flex>
+
         </v-container>
 
         <div v-for="(service, index) in form.services">
@@ -72,6 +83,8 @@
                                 <v-icon color="secondary">delete</v-icon>
                             </v-btn>
                         </v-flex>
+                    </v-layout>
+                    <v-layout>
                         <v-flex row wrap>
                             <div>
                                 Total Hors Taxe : {{ service.quantity * service.unitPrice }}
@@ -146,13 +159,13 @@
         created() {
             this.getClients();
         },
-
         data: () => ({
             valid: true,
             clients: [],
             client: null,
             clientId:'',
             form: {
+                period: null,
                 services:[
                     {
                         serviceName: '',
