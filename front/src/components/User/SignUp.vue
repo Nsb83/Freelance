@@ -34,8 +34,8 @@
                                 label="Ville"
                         ></v-text-field>
                         <v-text-field
-                                v-model="form.SIRENNumber"
-                                label="Numéro SIREN"
+                                v-model="form.SIRETNumber"
+                                label="Numéro SIRET"
                         ></v-text-field>
                         <v-text-field
                                 :append-icon="passwordInvisible ? 'visibility' : 'visibility_off'"
@@ -116,7 +116,7 @@
                     address: '',
                     postalCode: '',
                     city: '',
-                    SIRENNumber: '',
+                    SIRETNumber: '',
                     password: '',
                     // passwordConfirm: ''
                 }
@@ -147,7 +147,7 @@
                     this.form.address= this.user.address;
                     this.form.postalCode= this.user.postalCode;
                     this.form.city= this.user.city;
-                    this.form.SIRENNumber= this.user.SIRENNumber;
+                    this.form.SIRETNumber= this.user.SIRETNumber;
                 }
             }
         }

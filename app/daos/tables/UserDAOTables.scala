@@ -18,9 +18,9 @@ trait UserDAOTables extends DAOSlick {
     def address = column[String]("address")
     def postalCode = column[String]("postalCode")
     def city = column[String]("city")
-    def SIRENNUmber = column[String]("SIRENNumber")
+    def SIRETNUmber = column[String]("SIRETNumber")
 
-    def * = (id, firstName, lastName, fullName, email, phoneNumber, address, postalCode, city, SIRENNUmber) <> ((DBUser.apply _).tupled, DBUser.unapply)
+    def * = (id, firstName, lastName, fullName, email, phoneNumber, address, postalCode, city, SIRETNUmber) <> ((DBUser.apply _).tupled, DBUser.unapply)
   }
 
   case class DBLoginInfo (

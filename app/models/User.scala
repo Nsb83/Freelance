@@ -29,7 +29,7 @@ case class User(
                  address: String,
                  postalCode: String,
                  city: String,
-                 SIRENNumber: String) extends Identity
+                 SIRETNumber: String) extends Identity
 
 case class DBUser(
                    userID: UserID,
@@ -41,7 +41,7 @@ case class DBUser(
                    address: String,
                    postalCode: String,
                    city: String,
-                   SIRENNumber: String)
+                   SIRETNumber: String)
 
 object User {
   implicit val userWriter: OWrites[User] = Json.writes[User]

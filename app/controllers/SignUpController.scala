@@ -63,7 +63,7 @@ class SignUpController @Inject() (
               address = data.address,
               postalCode = data.postalCode,
               city = data.city,
-              SIRENNumber = data.SIRENNumber
+              SIRETNumber = data.SIRETNumber
             )
             for {
               user <- userService.save(user)

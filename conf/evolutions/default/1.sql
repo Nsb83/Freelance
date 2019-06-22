@@ -12,7 +12,7 @@ CREATE TABLE `User`(
                        `address` TEXT,
                        `postalCode` VARCHAR(40),
                        `city` VARCHAR(100),
-                       `SIRENNumber` VARCHAR(100),
+                       `SIRETNumber` VARCHAR(100),
                        PRIMARY KEY (`id`)
 );
 

@@ -6,7 +6,7 @@
                     <div class="headline">{{ user.fullName }}</div>
                     <div><v-icon color="white">email</v-icon>{{ user.email }}</div>
                     <div><v-icon color="white">phone</v-icon>{{ user.phoneNumber }}</div>
-                    <div><v-icon color="white">work_outline</v-icon>{{ user.SIRENNumber }}</div>
+                    <div><v-icon color="white">work_outline</v-icon>{{ user.SIRETNumber }}</div>
                 </div>
             </v-card-title>
 
