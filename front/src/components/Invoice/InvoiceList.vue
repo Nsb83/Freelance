@@ -33,7 +33,7 @@
         created: function() {
             this.getAllInvoices();
             bus.$on('getAllInvoices', this.getAllInvoices);
-            // this.getBank();
+            this.getBank();
         },
         beforeDestroy: function() {
             bus.$off('getAllInvoices');
