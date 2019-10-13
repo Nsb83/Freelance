@@ -59,7 +59,6 @@
                 this.$http.get(this.apiRoutes.get.getAllInvoicesWithClient(this.user.userID)).then(
                     response => {
                         this.invoices = response.body;
-                        console.log(this.invoices)
                     },
                     response => {
                         console.log(response)

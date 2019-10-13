@@ -36,7 +36,7 @@ class BankController @Inject()(
       }
     )
   }
-  def findMyBank(userId: UserID) = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit request: SecuredRequest[DefaultEnv, AnyContent]  =>
+  def findMyBank(userId: UserID): Action[AnyContent] = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit request: SecuredRequest[DefaultEnv, AnyContent]  =>
     bankDAO.find(userId).map { bankOpt =>
       val myBank = bankOpt.map { bank =>
         Json.obj(

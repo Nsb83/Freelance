@@ -15,11 +15,7 @@ trait InvoiceDAO {
 
   def findLastNumber: Future[Seq[DBInvoice]]
 
-//  def findCompleteInvoiceByClient(clientId: String): Future[Seq[Invoice]]
-
   def findInvoiceByClient(clientId: String): Future[Seq[DBInvoice]]
-
-  def findAllInvoices(userID: UserID): Future[Seq[Invoice]]
 
   def findInvoice(invoiceId: InvoiceId): Future[immutable.Iterable[Invoice]]
 
@@ -29,5 +25,4 @@ trait InvoiceDAO {
 
   def findCompleteInvoice(publicId: String): Future[Seq[InvoiceWithClient]]
 
-//  def findCompleteInvoice(publicId: String): Future[InvoiceWithClient]
 }

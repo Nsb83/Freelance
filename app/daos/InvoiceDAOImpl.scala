@@ -36,39 +36,8 @@ class InvoiceDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigPr
     db.run(slickInvoice.sortBy(_.id).result)
   }
 
-  //    def findCompleteInvoiceByClient(clientId: String): Future[Seq[Invoice]] = {
-  //      val query = slickInvoice.filter(_.clientId === clientId)
-  //        .joinLeft(slickService).on(_.id === _.invoiceId)
-  //      db.run(query.result).map { invoices =>
-  //        invoices.groupBy(_._1).map { x =>
-  //          Invoice(
-  //            id = x._1.id,
-  //            publicId = x._1.publicId,
-  //            date = x._1.date,
-  //            number = x._1.number,
-  //            clientId = x._1.clientId,
-  //            services = x._2.flatMap(_._2)
-  //          )
-  //        }
-  //      }
-  //    }
 
-  //  private def makeJsonService(service: DBService): JsValue = {
-  //    Json.toJson(Json.obj(
-  //      "id" -> service.serviceId,
-  //      "invoiceId" -> service.invoiceId,
-  //      "serviceName" -> service.serviceName,
-  //      "quantity" -> service.quantity,
-  //      "unitPrice" -> service.unitPrice,
-  //      "VATRate" -> service.VATRate,
-  //      "totalDutyFreePrice" -> service.totalDutyFreePrice,
-  //      "VATTotal" -> service.VATTotal,
-  //      "totalPrice" -> service.totalPrice
-  //    ))
-  //  }
-
-
-  def findServices(invoiceId: InvoiceId) = {
+  def findServices(invoiceId: InvoiceId): Future[Seq[DBService]] = {
     val q = slickService.filter(_.invoiceId === invoiceId)
     db.run(q.result).map { services =>
       services.map(s =>
@@ -84,7 +53,7 @@ class InvoiceDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigPr
   }
 
 
-  def findCalculatedInvoice(invoiceId: InvoiceId) = {
+  def findCalculatedInvoice(invoiceId: InvoiceId): Future[Seq[Service]] = {
     val calculatedInvoice = findServices(invoiceId).map { dbService =>
       dbService.map(_.toService)
     }
@@ -133,24 +102,6 @@ class InvoiceDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigPr
 
   def findInvoiceByClient(clientId: String): Future[Seq[DBInvoice]] = {
     db.run(slickInvoice.filter(_.clientId === clientId).result)
-  }
-
-  def findAllInvoices(userID: UserID): Future[Seq[Invoice]] = {
-    val q = slickInvoice.filter(_.userId === userID).joinLeft(slickService).on(_.id === _.invoiceId)
-    db.run(q.result).map { seqInvoice =>
-      seqInvoice.groupBy(_._1).map { x =>
-        Invoice(
-          id = x._1.id,
-          publicId = x._1.publicId,
-          date = x._1.date,
-          period = x._1.period,
-          number = x._1.number,
-          clientId = x._1.clientId,
-          services = x._2.flatMap(_._2),
-          userID = x._1.userID
-        )
-      }.toSeq
-    }
   }
 
   def findAllInvoicesWithClient(userID: UserID): Future[Seq[InvoiceWithClient]] = {

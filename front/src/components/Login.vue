@@ -68,17 +68,11 @@
             ...mapGetters(['apiRoutes', 'user'])
         },
         methods: {
-            // makePath(user) {
-            //     return ('/client');
-            // },
             login: function() {
                 let that = this;
                 this.$http.post(this.apiRoutes.post.login, this.form).then(result => {
                     Vue.ls.set("jwt", result.body.token);
                     this.updateUser(function () {
-                        // let path = that.$route.query.from;
-                        // if (path === undefined || path === '/')
-                        //     path = that.makePath(user);
                         that.$router.push({ path: '/client' });
                     });
                 }, result => {
@@ -87,8 +81,8 @@
             },
             signUp() {
                 this.$router.push({ path: '/signup' })
-
             },
+
             ...mapActions(['updateUser'])
         },
     }

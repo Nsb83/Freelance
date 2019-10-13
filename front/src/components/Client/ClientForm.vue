@@ -79,7 +79,6 @@
 </template>
 
 <script>
-    import { store } from 'vuex';
     import { bus } from '../../main';
     import { mapGetters } from 'vuex';
 

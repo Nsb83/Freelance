@@ -8,7 +8,8 @@ export default {
         createClient: '/clients/create',
         createInvoice: function(clientId, userId) {
             return '/invoice/create/' + clientId + '/' + userId
-        }
+        },
+        updateUser: '/user/update',
     },
     get: {
         checkConnected: 'checkConnected',
@@ -18,10 +19,6 @@ export default {
         getOneClient(clientId) {
             return '/clients/find/' + clientId
         },
-        getInvoicesByClient(clientId){
-            return '/invoice/getCompleteByClient/' + clientId
-        },
-        getAllInvoices: '/invoice/findAll',
         getAllInvoicesWithClient(userId) {
             return '/invoice/findAllWithClient/' + userId
         },

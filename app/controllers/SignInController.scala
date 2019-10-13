@@ -12,7 +12,7 @@ import models.User
 import net.ceedubs.ficus.Ficus._
 import play.api.Configuration
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.libs.json.{JsError, Json}
+import play.api.libs.json.{JsError, JsValue, Json}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents, Request}
 import play.api.routing.Router
 import services.UserService
@@ -53,7 +53,7 @@ class SignInController @Inject() (
     *
     * @return The result to display.
     */
-  def view = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
+  def view: Action[AnyContent] = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
     Future.successful(Ok(views.html.signIn(SignInForm.form)))
   }
 
@@ -62,7 +62,7 @@ class SignInController @Inject() (
     *
     * @return The result to display.
     */
-  def submit = silhouette.UnsecuredAction.async(parse.json) { implicit request =>
+  def submit: Action[JsValue] = silhouette.UnsecuredAction.async(parse.json) { implicit request =>
     request.body.validate[SignInForm.Data].fold(
       errors => Future.successful(BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toJson(errors)))),
       data => {

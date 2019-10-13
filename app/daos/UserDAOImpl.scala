@@ -4,9 +4,8 @@ import java.util.UUID
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import daos.tables.{PasswordInfoDAOTables, UserDAOTables}
-import play.api.libs.concurrent.ExecutionContextProvider
 import javax.inject.Inject
-import models.{DBUser, User, UserID}
+import models.{DBUser, User, UserID, UserToUpdate}
 import play.api.db.slick.DatabaseConfigProvider
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -102,4 +101,9 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     // run actions and return user afterwards
     db.run(actions).map(_ => user)
   }
+
+  def update(userToUpdate: UserToUpdate): Future[Int] = {
+    db.run(slickUser.filter(_.id === userToUpdate.user.userID).update(userToUpdate.user))
+  }
+
 }

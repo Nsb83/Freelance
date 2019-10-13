@@ -53,7 +53,24 @@ class ClientDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigPro
   }
 
   def findAll(userId: UserID): Future[Seq[DBClient]] = {
-    db.run(slickClient.filter(_.userId === userId).result)
+    db.run(slickClient.filter(_.userId === userId).result).map { clients =>
+      clients.map { client =>
+        DBClient(
+          id = client.id,
+          companyName = client.companyName,
+          referentFirstName = client.referentFirstName,
+          referentLastName = client.referentLastName,
+          address = client.address,
+          postalCode = client.postalCode,
+          city = client.city,
+          email = client.email,
+          phoneNumber = client.phoneNumber,
+          VATNumber = client.VATNumber,
+          isActive = client.isActive,
+          userId = client.userId
+        )
+      }
+    }
   }
 
   def delete(clientId: String): Future[Int] = {

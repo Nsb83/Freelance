@@ -3,7 +3,9 @@ package models
 import java.util.UUID
 
 import ai.x.play.json.Jsonx
+import com.mohiva.play.silhouette.api.util.{PasswordHasherRegistry, PasswordInfo}
 import com.mohiva.play.silhouette.api.{Identity, LoginInfo}
+import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import play.api.libs.json.{Format, Json, OWrites}
 import play.api.mvc.PathBindable
 import slick.lifted.MappedTo
@@ -65,3 +67,15 @@ object UserID {
     override def unbind(key: String, value: UserID): String = value.value.toString
   }
 }
+
+case class Credentials(
+                        loginInfo: LoginInfo,
+                        passwordInfo: PasswordInfo
+                      )
+
+case class UserToUpdate(
+                         user: DBUser,
+                         credentials: Credentials
+                       )
+
+

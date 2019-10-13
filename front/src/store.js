@@ -13,7 +13,7 @@ export const store = new Vuex.Store({
     getters: {
         apiRoutes: states => { return states.apiRoutes },
         user: state => {
-            let _user = state.user
+            let _user = state.user;
             if (Object.keys(state.user).length !== 0) {
                 return _user
             }

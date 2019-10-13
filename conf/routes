@@ -16,9 +16,7 @@ DELETE  /clients/delete/:id                         controllers.ClientController
 
 #Invoice
 POST    /invoice/create/:clientId/:userID           controllers.InvoiceController.createInvoice(clientId: String, userID: models.UserID)
-#GET     /invoice/getCompleteByClient/:clientId     controllers.InvoiceController.findAllCompleteInvoiceByClient(clientId: String)
 GET     /invoice/getByClient/:clientId              controllers.InvoiceController.findAllInvoiceByClient(clientId: String)
-GET     /invoice/findAll/:userID                    controllers.InvoiceController.findAllInvoices(userID: models.UserID)
 GET     /invoice/findAllWithClient/:userID          controllers.InvoiceController.findAllInvoicesWithClient(userID: models.UserID)
 
 GET     /invoice/find/:invoiceId                    controllers.InvoiceController.getInvoices(invoiceId: models.InvoiceId)
@@ -33,6 +31,7 @@ GET     /signOut                                    controllers.ApplicationContr
 #POST   /authenticate/credentials                   controllers.CredentialsAuthController.authenticate
 
 GET     /checkConnected                             controllers.SignInController.checkConnected
+POST    /user/update                                controllers.SignUpController.updateUser
 
 #Bank
 POST    /bank/create/:userId                        controllers.BankController.saveBank(userId: models.UserID)

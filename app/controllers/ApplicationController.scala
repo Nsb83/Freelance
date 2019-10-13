@@ -7,7 +7,7 @@ import forms.{SignInForm, SignUpForm}
 import javax.inject.Inject
 import models.User
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{AbstractController, AnyContent, ControllerComponents}
+import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 import utils.auth.DefaultEnv
 
 import scala.concurrent.Future
@@ -26,7 +26,7 @@ class ApplicationController @Inject() (
     *
     * @return The result to display.
     */
-  def index = silhouette.SecuredAction.async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
+  def index: Action[AnyContent] = silhouette.SecuredAction.async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
     Future.successful(Ok(views.html.home(request.identity)))
   }
 
@@ -35,21 +35,19 @@ class ApplicationController @Inject() (
     *
     * @return The result to display.
     */
-  def signIn = silhouette.UserAwareAction.async { implicit request =>
+  def signIn: Action[AnyContent] = silhouette.UserAwareAction.async { implicit request =>
     request.identity match {
       case Some(user) => Future.successful(Redirect(routes.ApplicationController.index()))
       case None => Future.successful(Ok(views.html.signIn(SignInForm.form)))
     }
   }
-//  def signIn = silhouette.UnsecuredAction.async { implicit request =>
-//      Future.successful(Ok(views.html.signIn(SignInForm.form)))
-//  }
+
   /**
     * Handles the Sign Up action.
     *
     * @return The result to display.
     */
-  def signUp = silhouette.UserAwareAction.async { implicit request =>
+  def signUp: Action[AnyContent] = silhouette.UserAwareAction.async { implicit request =>
     request.identity match {
       case Some(user) => Future.successful(Redirect(routes.ApplicationController.index()))
       case None => Future.successful(Ok(views.html.signUp(SignUpForm.form)))
@@ -61,7 +59,7 @@ class ApplicationController @Inject() (
     *
     * @return The result to display.
     */
-  def signOut = silhouette.SecuredAction.async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
+  def signOut: Action[AnyContent] = silhouette.SecuredAction.async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
     val result = Redirect(routes.ApplicationController.index())
     silhouette.env.eventBus.publish(LogoutEvent(request.identity, request))
     silhouette.env.authenticatorService.discard(request.authenticator, result)
