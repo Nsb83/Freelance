@@ -56,10 +56,10 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
     val actualYear = LocalDateTime.now().getYear.toString
     invoiceDAO.findLastNumberForUser(userID).map { numberList =>
       val number = numberList.length
-      numberList.map { x =>
+      numberList.reverse.map { x =>
         val year: Array[String] = x.number.split('-')
         val yearToLong: Long = year(0).toLong
-        if (actualYear.toLong > yearToLong) {
+       if (actualYear.toLong > yearToLong) {
           actualYear + '-' + "%04d".format(1)
         } else {
           val numb = number + 1
