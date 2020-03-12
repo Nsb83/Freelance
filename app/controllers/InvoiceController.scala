@@ -55,7 +55,7 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
   def createUniqueChronologicalNumber(userID: UserID): Future[Seq[String]] = {
     val actualYear = LocalDateTime.now().getYear.toString
     invoiceDAO.findLastNumberForUser(userID).map { numberList =>
-      val number = numberList.length
+      val number = numberList.collect{ case n if n.number.startsWith(actualYear) => n}.length
       numberList.reverse.map { x =>
         val year: Array[String] = x.number.split('-')
         val yearToLong: Long = year(0).toLong
