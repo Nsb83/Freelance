@@ -167,6 +167,7 @@
                 period: null,
                 services:[
                     {
+                        serviceNumber: 1,
                         serviceName: '',
                         quantity: '',
                         unitPrice: '',
@@ -221,11 +222,13 @@
             },
             addNewService() {
                 this.form.services.push({
+                    serviceNumber: this.form.services.length + 1,
                     serviceName: '',
                     quantity: '',
                     unitPrice: '',
                     VATRate: '',
                 });
+                console.log(this.form.services)
             },
             deleteServiceRow(index) {
                 this.form.services.splice(index, 1)
@@ -235,6 +238,7 @@
                 this.client = null;
                 this.form.services = [
                     {
+                        serviceNumber: 1,
                         serviceName: '',
                         quantity: '',
                         unitPrice: '',

@@ -96,6 +96,7 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
               DBService(
                 serviceId = ServiceId(UUID.randomUUID().toString),
                 invoiceId = InvoiceId(numb),
+                serviceNumber = newService.serviceNumber,
                 serviceName = newService.serviceName,
                 quantity = newService.quantity,
                 unitPrice = newService.unitPrice,
@@ -133,10 +134,15 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
     }
   }
 
+  object Joda {
+    implicit def dateTimeOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isAfter _)
+  }
 
   def findAllInvoicesWithClient(userID: UserID): Action[AnyContent] = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit req: SecuredRequest[DefaultEnv, AnyContent] =>
+    import Joda._
+
     invoiceDAO.findAllInvoicesWithClient(userID).map { seqInvoiceWithClient =>
-      val x = seqInvoiceWithClient.map { invoiceWithClient =>
+      val x = seqInvoiceWithClient.sortBy(_.date).map { invoiceWithClient =>
         val fullInvoice = FullInvoiceWithClient.getCalculatedInvoice(invoiceWithClient)
         Json.obj(
           "publicId" -> fullInvoice.publicId,
@@ -160,7 +166,7 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
         userOpt.map { user =>
           bankDAO.find(user.userID).map { bankOpt =>
             bankOpt.map { bank =>
-              pdfGen.ok(views.html.exportPDFInvoice(fullInvoice, client, services, user, bank), config.get[String]("baseUrl"))
+              pdfGen.ok(views.html.exportPDFInvoice(fullInvoice, client, services.sortBy(_.serviceNumber), user, bank), config.get[String]("baseUrl"))
             }.getOrElse(BadRequest)
           }
         }.getOrElse(Future.successful(BadRequest))

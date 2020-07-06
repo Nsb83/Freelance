@@ -6,7 +6,7 @@ import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import daos.BankDAO
 import forms.BankForm.BankForm
 import javax.inject.Inject
-import models.{DBBank, UserID}
+import models.{BankID, DBBank, UserID}
 import play.api.libs.json.{JsError, JsValue, Json}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 import utils.auth.{DefaultEnv, WithProvider}
@@ -27,6 +27,7 @@ class BankController @Inject()(
       error => Future.successful(BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toJson(error)))),
       newBankForm => {
         val newBank = DBBank(
+          id = newBankForm.id.getOrElse(BankID(0L)),
           bankName = newBankForm.bankName,
           BICNumber = newBankForm.BICNumber,
           IBANNumber = newBankForm.IBANNumber,

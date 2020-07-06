@@ -61,7 +61,7 @@
             return {
                 valid: true,
                 form: {
-                    id: '',
+                    id: null,
                     bankName: '',
                     BICNumber: '',
                     IBANNumber: '',

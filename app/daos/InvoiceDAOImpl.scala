@@ -44,6 +44,7 @@ class InvoiceDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigPr
         DBService(
           serviceId = s.serviceId,
           invoiceId = s.invoiceId,
+          serviceNumber = s.serviceNumber,
           serviceName = s.serviceName,
           quantity = s.quantity,
           unitPrice = s.unitPrice,

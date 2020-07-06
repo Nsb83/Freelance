@@ -5,7 +5,7 @@ import play.api.libs.json.{Format, Json, OFormat}
 import play.api.mvc.PathBindable
 import slick.lifted.MappedTo
 
-case class DBBank (id: BankID = BankID(0),
+case class DBBank (id: BankID,
                    bankName: String,
                    BICNumber: String,
                    IBANNumber: String,

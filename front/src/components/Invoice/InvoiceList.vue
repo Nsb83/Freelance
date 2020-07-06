@@ -5,6 +5,7 @@
                 :items="invoices"
                 class="elevation-1 text-xs-center"
                 hide-actions
+                disable-initial-sort
         >
 
             <template v-slot:items="props">

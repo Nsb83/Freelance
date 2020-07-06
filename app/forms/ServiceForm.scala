@@ -5,6 +5,7 @@ import play.api.libs.json._
 object ServiceForm {
 
   case class ServiceForm(
+                          serviceNumber: Int,
                          serviceName: String,
                          quantity: BigDecimal,
                          unitPrice: BigDecimal,

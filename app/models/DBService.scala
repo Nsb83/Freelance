@@ -7,6 +7,7 @@ import play.api.mvc.PathBindable
 
 case class Service (serviceId: ServiceId,
                     invoiceId: InvoiceId,
+                    serviceNumber: Int,
                       serviceName: String,
                       quantity: BigDecimal,
                       unitPrice: BigDecimal,
@@ -17,6 +18,7 @@ case class Service (serviceId: ServiceId,
 
 case class DBService (serviceId: ServiceId,
                       invoiceId: InvoiceId,
+                      serviceNumber: Int,
                     serviceName: String,
                     quantity: BigDecimal,
                     unitPrice: BigDecimal,
@@ -29,6 +31,7 @@ case class DBService (serviceId: ServiceId,
     Service(
       serviceId = serviceId,
       invoiceId = invoiceId,
+      serviceNumber = serviceNumber,
       serviceName = serviceName,
       unitPrice = unitPrice,
       quantity = quantity,

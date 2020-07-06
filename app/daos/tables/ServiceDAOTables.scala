@@ -10,6 +10,7 @@ trait ServiceDAOTables extends DAOSlick {
   class ServiceDBTable(tag: Tag) extends Table[DBService](tag, "Service") {
     def serviceId = column[ServiceId]("id", O.PrimaryKey)
     def invoiceId = column[InvoiceId]("invoiceId")
+    def serviceNumber = column[Int]("serviceNumber")
     def serviceName = column[String]("serviceName")
     def quantity = column[BigDecimal]("quantity")
     def unitPrice = column[BigDecimal]("unitPrice")
@@ -17,6 +18,7 @@ trait ServiceDAOTables extends DAOSlick {
     def * = (
       serviceId,
       invoiceId,
+      serviceNumber,
       serviceName,
       quantity,
       unitPrice,
