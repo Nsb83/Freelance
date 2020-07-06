@@ -10,6 +10,7 @@
 
             <template v-slot:items="props">
                 <td class="text-center">{{ props.item.number }}</td>
+                <td class="text-center">{{ props.item.period }}</td>
                 <td class="text-center">{{ props.item.client }}</td>
                 <td class="text-center">{{ formatDateTime(props.item.date) }}</td>
                 <td class="text-center">{{ props.item.totalTTC }} €</td>
@@ -46,8 +47,9 @@
             return {
                 headers: [
                     { text: 'Numéro de facture', value: 'number', align: 'center'},
+                    { text: 'Période de la facture', value: 'period', align: 'center'},
                     { text: 'Client', value: 'client', align: 'center' },
-                    { text: 'date', value: 'date', align:'center' },
+                    { text: 'Date d\'émission', value: 'date', align:'center' },
                     { text: 'Montant total TTC', value: 'totalTTC', align: 'center'}
                          ],
                 invoices: [],

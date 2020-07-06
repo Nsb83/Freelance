@@ -147,6 +147,7 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
         Json.obj(
           "publicId" -> fullInvoice.publicId,
           "date" -> fullInvoice.date,
+          "period" -> fullInvoice.period,
           "number" -> fullInvoice.number,
           "client" -> fullInvoice.client.companyName,
           "totalTTC" -> fullInvoice.totalTTC
