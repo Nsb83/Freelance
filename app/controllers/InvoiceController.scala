@@ -134,12 +134,8 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
     }
   }
 
-  object Joda {
-    implicit def dateTimeOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isAfter _)
-  }
-
   def findAllInvoicesWithClient(userID: UserID): Action[AnyContent] = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async { implicit req: SecuredRequest[DefaultEnv, AnyContent] =>
-    import Joda._
+    import utils.JodaOrdering._
 
     invoiceDAO.findAllInvoicesWithClient(userID).map { seqInvoiceWithClient =>
       val x = seqInvoiceWithClient.sortBy(_.date).map { invoiceWithClient =>

@@ -39,3 +39,6 @@ GET     /bank/find/:userId                           controllers.BankController.
 
 #ExportPDF
 GET     /invoice/exportPDF/invoice.pdf               controllers.InvoiceController.exportInvoiceToPdf(publicId: String)
+
+#taxTracking
+POST    /tax/save                                   controllers.TaxTrackingController.saveTaxPayment()

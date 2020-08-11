@@ -47,6 +47,7 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     bind[InvoiceDAO].to[InvoiceDAOImpl]
     bind[BankDAO].to[BankDAOImpl]
     bind[DelegableAuthInfoDAO[PasswordInfo]].to[PasswordInfoDAO]
+    bind[TaxTrackingDAO].to[TaxTrackingDAOImpl]
     bind[CacheLayer].to[PlayCacheLayer]
     bind[IDGenerator].toInstance(new SecureRandomIDGenerator())
     bind[PasswordHasher].toInstance(new BCryptPasswordHasher)
