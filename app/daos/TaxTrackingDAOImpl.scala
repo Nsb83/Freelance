@@ -15,12 +15,12 @@ class TaxTrackingDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConf
 
   def save(taxTracking: DBTaxTracking, invoicesId: Seq[InvoiceId]): Future[Int] = {
     val actions = ((slickTaxTracking returning slickTaxTracking.map(_.id)) += taxTracking).flatMap { newTaxId =>
-      DBIO.sequence(invoicesId.map { invoiceId =>
+      DBIO.fold(invoicesId.map { invoiceId =>
         slickIncomeTaxTracking += DBIncomeTaxTracking(newTaxId, invoiceId)
-      })
+      }, 0)(_ + _) // TODO Ca marche ça ?
     }
     db.run(actions.asTry).map {
-      case Success(value) => value.sum
+      case Success(value) => value
       case Failure(ex) => Logger.debug(ex.getMessage)
         0
     }
