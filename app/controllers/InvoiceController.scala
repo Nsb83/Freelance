@@ -2,6 +2,8 @@ package controllers
 
 import java.util.UUID
 
+import akka.stream.scaladsl.Source
+import akka.util.ByteString
 import com.builtamont.play.pdf.PdfGenerator
 import com.mohiva.play.silhouette.api.Silhouette
 import com.mohiva.play.silhouette.api.actions.SecuredRequest
@@ -13,11 +15,13 @@ import javax.inject.Inject
 import models._
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import org.joda.time.{DateTime, LocalDateTime}
+import play.api.http.HttpEntity
 import play.api.{Configuration, Environment}
 import play.api.libs.json.JodaWrites._
 import play.api.libs.json.JodaReads._
 import play.api.libs.json._
-import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents, Result}
+import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents, ResponseHeader, Result}
+import play.twirl.api.Html
 import utils.auth.{DefaultEnv, WithProvider}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,6 +55,21 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
     "fonts/Roboto-Thin.ttf",
     "fonts/Roboto-ThinItalic.ttf"
   ))
+
+  val fonts: Seq[String] = Seq(
+    "fonts/Roboto-Black.ttf",
+    "fonts/Roboto-BlackItalic.ttf",
+    "fonts/Roboto-Bold.ttf",
+    "fonts/Roboto-BoldItalic.ttf",
+    "fonts/Roboto-Italic.ttf",
+    "fonts/Roboto-Light.ttf",
+    "fonts/Roboto-LightItalic.ttf",
+    "fonts/Roboto-Medium.ttf",
+    "fonts/Roboto-MediumItalic.ttf",
+    "fonts/Roboto-Regular.ttf",
+    "fonts/Roboto-Thin.ttf",
+    "fonts/Roboto-ThinItalic.ttf"
+  )
 
   def createUniqueChronologicalNumber(userID: UserID): Future[Seq[String]] = {
     val actualYear = LocalDateTime.now().getYear.toString
@@ -153,6 +172,20 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
     }
   }
 
+  private def makeByteArrayFromHtml(html: Html): Array[Byte] = {
+    pdfGen.toBytes(html, config.get[String]("baseUrl"), fonts)
+  }
+
+  private def makePdfAsResult(byteArray: Array[Byte], fileName: String) : Result = {
+    val pdfSize = byteArray.length.toLong
+    val headers = Map(
+
+      CONTENT_DISPOSITION -> s"attachment; filename=Facture $fileName.pdf"
+    )
+    val responseBody =  HttpEntity.Streamed(Source.single(ByteString.fromArray(byteArray)), Some(pdfSize), Some("application/pdf"))
+    Result(ResponseHeader(200, headers), responseBody)
+  }
+
   def exportInvoiceToPdf(publicId: String): Action[AnyContent] = Action.async { implicit r =>
     invoiceDAO.findCompleteInvoice(publicId).flatMap { invoiceSeq =>
       val invoice = invoiceSeq.head
@@ -163,7 +196,10 @@ class InvoiceController @Inject()(silhouette: Silhouette[DefaultEnv],
         userOpt.map { user =>
           bankDAO.find(user.userID).map { bankOpt =>
             bankOpt.map { bank =>
-              pdfGen.ok(views.html.exportPDFInvoice(fullInvoice, client, services.sortBy(_.serviceNumber), user, bank), config.get[String]("baseUrl"))
+              val fileTitle = s"${user.lastName} ${user.firstName} ${client.companyName} ${fullInvoice.period}"
+              val pdf = makeByteArrayFromHtml(views.html.exportPDFInvoice(fullInvoice, client, services.sortBy(_.serviceNumber), user, bank))
+              makePdfAsResult(pdf, fileTitle)
+//              pdfGen.ok(views.html.exportPDFInvoice(fullInvoice, client, services.sortBy(_.serviceNumber), user, bank), config.get[String]("baseUrl"))
             }.getOrElse(BadRequest)
           }
         }.getOrElse(Future.successful(BadRequest))
