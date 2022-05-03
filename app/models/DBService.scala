@@ -5,6 +5,8 @@ import play.api.libs.json._
 import slick.lifted.MappedTo
 import play.api.mvc.PathBindable
 
+import scala.math.BigDecimal.RoundingMode
+
 case class Service (serviceId: ServiceId,
                     invoiceId: InvoiceId,
                     serviceNumber: Int,
@@ -19,12 +21,12 @@ case class Service (serviceId: ServiceId,
 case class DBService (serviceId: ServiceId,
                       invoiceId: InvoiceId,
                       serviceNumber: Int,
-                    serviceName: String,
-                    quantity: BigDecimal,
-                    unitPrice: BigDecimal,
-                    VATRate: BigDecimal) {
+                      serviceName: String,
+                      quantity: BigDecimal,
+                      unitPrice: BigDecimal,
+                      VATRate: BigDecimal) {
   def toService: Service = {
-    val realVATRate = VATRate / 100
+    val realVATRate = if(VATRate != 0) (VATRate / 100).setScale(2, RoundingMode.HALF_DOWN) else BigDecimal(0).setScale(0)
     val totalDutyFreePrice = unitPrice * quantity
     val VATTotal = totalDutyFreePrice * realVATRate
 
@@ -35,10 +37,10 @@ case class DBService (serviceId: ServiceId,
       serviceName = serviceName,
       unitPrice = unitPrice,
       quantity = quantity,
-      VATRate = realVATRate,
-      totalDutyFreePrice = totalDutyFreePrice,
-      VATTotal = VATTotal,
-      totalPrice = totalDutyFreePrice + VATTotal
+      VATRate = VATRate,
+      totalDutyFreePrice = totalDutyFreePrice.setScale(2, RoundingMode.CEILING),
+      VATTotal = if(VATTotal != 0) VATTotal.setScale(2, RoundingMode.HALF_DOWN) else BigDecimal(0).setScale(0),
+      totalPrice = (totalDutyFreePrice + VATTotal).setScale(2, RoundingMode.HALF_DOWN)
     )
   }
 }

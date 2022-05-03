@@ -8,6 +8,7 @@ import play.api.libs.json._
 import play.api.mvc.PathBindable
 import slick.lifted.MappedTo
 
+import scala.collection.immutable.ListMap
 import scala.concurrent.Future
 
 case class DBInvoice (id: InvoiceId = InvoiceId(0),
@@ -75,9 +76,9 @@ object FullInvoice {
   def getCalculatedInvoice(invoice: Invoice): FullInvoice = {
     val seqServ = invoice.services
     val calculatedService = seqServ.map(_.toService)
-    val VATRates: Map[BigDecimal, BigDecimal] = calculatedService.groupBy(_.VATRate).map { case (vat, rate) =>
+    val VATRates: Map[BigDecimal, BigDecimal] = ListMap(calculatedService.groupBy(_.VATRate).map { case (vat, rate) =>
       (vat, rate.map(_.VATTotal).sum)
-    }
+    }.toSeq.sortBy(_._1):_*)
     FullInvoice(invoice.id, invoice.publicId, invoice.date, invoice.period, invoice.number, invoice.clientId, invoice.userID, calculatedService, calculatedService.map(_.totalDutyFreePrice).sum, VATRates, calculatedService.map(_.totalPrice).sum)
   }
 }
@@ -112,9 +113,9 @@ object FullInvoiceWithClient {
   def getCalculatedInvoice(invoiceWithClient: InvoiceWithClient): FullInvoiceWithClient = {
     val seqServ: Seq[DBService] = invoiceWithClient.services
     val calculatedService: Seq[Service] = seqServ.map(_.toService)
-    val VATRates: Map[BigDecimal, BigDecimal] = calculatedService.groupBy(_.VATRate).map { case (vat, rate) =>
+    val VATRates: Map[BigDecimal, BigDecimal] = ListMap(calculatedService.groupBy(_.VATRate).map { case (vat, rate) =>
       (vat, rate.map(_.VATTotal).sum)
-    }
+    }.toSeq.sortBy(_._1):_*)
     FullInvoiceWithClient(invoiceWithClient.id, invoiceWithClient.publicId, invoiceWithClient.date, invoiceWithClient.period, invoiceWithClient.number, invoiceWithClient.client, invoiceWithClient.userID, calculatedService, calculatedService.map(_.totalDutyFreePrice).sum, VATRates, calculatedService.map(_.totalPrice).sum)
   }
 }

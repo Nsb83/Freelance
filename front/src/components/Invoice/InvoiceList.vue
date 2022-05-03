@@ -14,7 +14,7 @@
                 <td class="text-center">{{ props.item.client }}</td>
                 <td class="text-center">{{ formatDateTime(props.item.date) }}</td>
                 <td class="text-center">{{ props.item.totalTTC }} €</td>
-                <v-btn v-if="bankId!== null" slot="activator" icon class="mx-0" :href="apiRoutes.get.exportInvoiceToPDF(props.item.publicId)">
+                <v-btn v-if="bankId!== null" slot="activator" icon class="mx-0" :href="apiRoutes.get.exportInvoiceToPDF(props.item.publicId)" target="_blank">
                     <v-icon color="secondary">print</v-icon>
                 </v-btn>
                 <v-btn v-else icon class="mx-0" disabled>

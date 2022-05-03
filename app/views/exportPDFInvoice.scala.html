@@ -58,7 +58,7 @@
         padding: 3px;
     }
     .service-name {
-        width: 40%;
+        width: 30%;
     }
     .quantity {
         width: 15%;
@@ -72,6 +72,14 @@
     .line-jump {
         height: 30px;
     }
+    .total {
+        width: 100%;
+    }
+    .recap {
+        margin-left: auto;
+        margin-right: 60px;
+        width: 32%;
+    }
     .final-total {
         background-color: #78909C;
         font-weight: bold;
@@ -79,7 +87,7 @@
     }
     .VAT {
         text-align: center;
-        font-size: 9px;
+        width: 10%;
     }
     .paiement-rules {
         margin-top: 80px;
@@ -153,37 +161,45 @@
                     <th class="service-name">Désignation des prestations</th>
                     <th class="quantity">Quantité</th>
                     <th class="unit-price">Prix Unitaire HT</th>
-                    <th class="unit-price">TVA</th>
+                    <th class="unit-price">Taux TVA</th>
+                    <th class="VAT">TVA</th>
                     <th class="total-ht">Prix Total HT</th>
                 </tr>
 
-                @for((services, index) <- services.zipWithIndex) {
+                @for((service, index) <- services.zipWithIndex) {
                 <tr>
-                    <td>@{services.serviceName}</td>
-                    <td style="text-align: center">@{services.quantity}</td>
-                    <td style="text-align: center">@{services.unitPrice}</td>
-                    <td style="text-align: center">@{services.VATTotal}</td>
-                    <td style="text-align: right">@{services.totalDutyFreePrice}</td>
+                    <td>@{service.serviceName}</td>
+                    <td style="text-align: center">@{service.quantity}</td>
+                    <td style="text-align: center">@{service.unitPrice}</td>
+                    <td style="text-align: center">@{service.VATRate.underlying().stripTrailingZeros().toPlainString} %</td>
+                    <td style="text-align: center">@{service.VATTotal}</td>
+                    <td style="text-align: center">@{service.totalDutyFreePrice}</td>
                 </tr>
                 }
                 <tr class="line-jump"></tr>
-                <tr class="total">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="final-total">TOTAL HT</td>
-                    <td style="text-align:right">@invoice.totalHT EUR</td>
-                </tr>
+                @if(invoice.totalTVAs.filterKeys(_ != 0).nonEmpty) {
+                    @for((rate, vatTotal) <- invoice.totalTVAs){
+                        <tr>
+                            <td colspan="3"></td>
+                            <td class="final-total" colspan="2">TVA à @{rate.underlying().stripTrailingZeros().toPlainString} %</td>
+                            <td style="text-align:right" >@{vatTotal.toString()} €</td>
+                        </tr>
+                    }
+                }
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="VAT" colspan="2">TVA non applicable, art. 293B du CGI</td>
+                    <td colspan="3"></td>
+                    <td class="final-total" colspan="2">TOTAL TTC</td>
+                    <td style="text-align:right">@invoice.totalTTC €</td>
                 </tr>
-
-
+                @if(invoice.totalTVAs.filterKeys(_ != 0).isEmpty) {
+                    <tr>
+                        <td colspan="3"></td>
+                        <td class="VAT" colspan="3">TVA non applicable, art. 293B du CGI</td>
+                    </tr>
+                }
             </table>
         </div>
+
         <div class="paiement-rules">
             <p><b>Conditions de paiement : </b>Paiement à réception par virement bancaire</p>
             <p><b>Banque : </b>@bank.bankName<span class="RIB"><b>IBAN : </b>@bank.IBANNumber</span><span class="RIB"><b>BIC : </b>@bank.BICNumber</span></p>
