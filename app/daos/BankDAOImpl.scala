@@ -18,7 +18,7 @@ class BankDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
     val action = slickBank.insertOrUpdate(bank).map(_ => bank)
 
     db.run(action.asTry).map {
-      case Failure(exception) => Logger.debug(exception.getMessage)
+      case Failure(exception) => println(exception.getMessage)
         None
       case Success(value) => Some(value)
     }

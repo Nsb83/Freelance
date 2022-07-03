@@ -21,7 +21,7 @@ class TaxTrackingDAOImpl @Inject() (protected val dbConfigProvider: DatabaseConf
     }
     db.run(actions.asTry).map {
       case Success(value) => value
-      case Failure(ex) => Logger.debug(ex.getMessage)
+      case Failure(ex) => println(ex.getMessage)
         0
     }
   }

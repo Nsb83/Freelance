@@ -11,7 +11,7 @@
     }
     <fieldset class="col-md-6 col-md-offset-3">
         <legend>@Messages("sign.in.credentials")</legend>
-        @helper.form(action = routes.SignInController.submit()) {
+        @helper.form(action = routes.SignInController.submit) {
             @helper.CSRF.formField
             @b4.email(signInForm("email"), '_hiddenLabel -> Messages("email"), 'placeholder -> Messages("email"), 'class -> "form-control input-lg")
             @b4.password(signInForm("password"), '_hiddenLabel -> Messages("password"), 'placeholder -> Messages("password"), 'class -> "form-control input-lg")

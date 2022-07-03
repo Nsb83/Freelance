@@ -53,7 +53,7 @@ Vue.http.options.root = config.baseUrl();
 export const bus = new Vue();
 
 Vue.http.interceptors.push(function(request, next) {
-    let csrfToken = Vue.cookies.get("PLAY_CSRF_TOKEN");
+    let csrfToken = Vue.$cookies.get("PLAY_CSRF_TOKEN");
     let jwt = Vue.ls.get("jwt");
 
     if (jwt !== null && jwt !== undefined && jwt !== "")

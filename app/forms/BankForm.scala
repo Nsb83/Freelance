@@ -1,7 +1,6 @@
 package forms
 
-import forms.ClientForm.ClientForm
-import models.{BankID, UserID}
+import models.BankID
 import play.api.libs.json.{Json, OFormat}
 
 object BankForm {

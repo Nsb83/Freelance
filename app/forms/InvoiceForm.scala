@@ -1,7 +1,6 @@
 package forms
 
 import forms.ServiceForm.ServiceForm
-import models.UserID
 import play.api.libs.json._
 
 object InvoiceForm {

@@ -1,11 +1,12 @@
 import com.typesafe.sbt.packager.MappingsHelper._
-mappings in Universal ++= directory(baseDirectory.value / "public")
+import scala.sys.process.Process
+//mappings in Universal ++= directory(baseDirectory.value / "public")
 
 name := "Freelance"
 
 version := "1.1"
 
-scalaVersion := "2.12.2"
+scalaVersion := "2.12.8"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
@@ -14,31 +15,34 @@ libraryDependencies ++= Seq(guice, ehcache, filters, cacheApi, ws, specs2 % Test
 // Play framework hooks for development
 PlayKeys.playRunHooks += WebpackServer(file("./front"))
 
-unmanagedResourceDirectories in Test +=  baseDirectory ( _ /"target/web/public/test" ).value
+//unmanagedResourceDirectories in Test +=  baseDirectory ( _ /"target/web/public/test" ).value
 
-resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
+//resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
+resolvers += Resolver.typesafeRepo("releases")
+resolvers += Resolver.jcenterRepo
 
 // Production front-end build
-lazy val cleanFrontEndBuild = taskKey[Unit]("Remove the old front-end build")
-
-cleanFrontEndBuild := {
-  val d = file("public/bundle")
-  if (d.exists()) {
-    d.listFiles.foreach(f => {
-      if(f.isFile) f.delete
-    })
-  }
-}
-
+//lazy val cleanFrontEndBuild = taskKey[Unit]("Remove the old front-end build")
+//
+//cleanFrontEndBuild := {
+//  val d = file("public/bundle")
+//  if (d.exists()) {
+//    d.listFiles.foreach(f => {
+//      if(f.isFile) f.delete
+//    })
+//  }
+//}
+//
 lazy val frontEndBuild = taskKey[Unit]("Execute the npm build command to build the front-end")
+
 
 frontEndBuild := {
   println(Process("npm install", file("front")).!!)
   println(Process("npm run build", file("front")).!!)
 }
-
-frontEndBuild := (frontEndBuild dependsOn cleanFrontEndBuild).value
-
+//
+//frontEndBuild := (frontEndBuild dependsOn cleanFrontEndBuild).value
+//
 dist := (dist dependsOn frontEndBuild).value
 
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.0.0" % Test
@@ -58,7 +62,7 @@ libraryDependencies ++= Seq(
 
 libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick" % "3.2.1",
-  "org.slf4j" % "slf4j-nop" % "1.6.4",
+  "org.slf4j" % "slf4j-nop" % "1.6.4" % Provided,
   "com.typesafe.slick" %% "slick-hikaricp" % "3.2.1",
   "com.github.tototoshi" %% "slick-joda-mapper" % "2.3.0",
   "joda-time" % "joda-time" % "2.7",

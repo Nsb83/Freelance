@@ -54,7 +54,7 @@ class SignUpController @Inject() (
         val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
         userService.retrieve(loginInfo).flatMap {
           case Some(user) =>
-            Future.successful(Redirect(routes.ApplicationController.signUp()).flashing("error" -> Messages("user.exists")))
+            Future.successful(Redirect(routes.ApplicationController.signUp).flashing("error" -> Messages("user.exists")))
           case None =>
             val authInfo = passwordHasher.hash(data.password)
             val user = User(
@@ -75,7 +75,7 @@ class SignUpController @Inject() (
               authInfo <- authInfoRepository.add(loginInfo, authInfo)
               authenticator <- env.authenticatorService.create(loginInfo)
               value <- env.authenticatorService.init(authenticator)
-              result <- env.authenticatorService.embed(value, Redirect(routes.ApplicationController.index()))
+              result <- env.authenticatorService.embed(value, Redirect(routes.ApplicationController.index))
             } yield {
               env.eventBus.publish(SignUpEvent(user, request))
               env.eventBus.publish(LoginEvent(user, request))
@@ -120,7 +120,7 @@ class SignUpController @Inject() (
     }
   }
 
-  def updateUser: Action[JsValue] = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async(parse.json) { implicit req: SecuredRequest[DefaultEnv, JsValue] =>
+  def updateUser(): Action[JsValue] = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async(parse.json) { implicit req: SecuredRequest[DefaultEnv, JsValue] =>
     implicit val reader: Reads[UserToUpdateForm] = Json.reads[UserToUpdateForm]
 
     req.body.validate[UserToUpdateForm] match {
